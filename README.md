@@ -145,7 +145,7 @@ npm run dev         # web demo (dev sandbox)
 ## 9. Future Roadmap
 
 - **Indic-script homoglyphs** (Kannada / Devanagari look-alikes).
-- **Hybrid pipeline** — use the fast string engine as a pre-filter ahead of an optional ML stage.
+- **Hybrid pipeline** — use the fast string engine as a pre-filter ahead of an optional ML stage. *(Prototyped on the `phase-c-ml` branch: an explainable, dependency-free logistic-regression head over the engine's features — see [`ML.md`](ML.md).)*
 - **Registrar-side screening** — flag abusive registrations at creation time.
 - **Chrome Web Store publication** of the extension.
 - **Conference paper (IEEE format)** on the homoglyph-aware weighted edit-distance method and its evaluation.

@@ -31,6 +31,11 @@ export const FEATURE_NAMES = [
   'digitRatio', // digits / label length
   'hyphenCount', // hyphens in the label
   'official', // exact official / alt / owned-name domain (strong negative)
+  // Interaction features — give the linear model the conjunctions the rule
+  // engine encodes (a brand resemblance only matters when it's NOT the brand).
+  'simUnofficial', // bestSim x (1 - official): looks like a brand but isn't it
+  'embedLure', // brand embedded AND a lure word present (combosquat)
+  'subUnofficial', // brand in a sub-domain AND not an official domain
 ] as const
 
 const ASCII_ONLY = /^[\x00-\x7f]*$/
@@ -110,6 +115,10 @@ export function extractFeatures(input: string): FeatureVector {
     sld.length ? digits / sld.length : 0,
     (sld.match(/-/g) ?? []).length,
     official,
+    // Interactions
+    bestSim * (1 - official),
+    embedded * (lureCount > 0 ? 1 : 0),
+    subBrand * (1 - official),
   ]
   return { names: FEATURE_NAMES, values }
 }
