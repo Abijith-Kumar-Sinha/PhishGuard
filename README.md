@@ -129,19 +129,6 @@ npm run dev         # web demo (dev sandbox)
 
 ---
 
-## 8. TODO
-
-- [ ] Capture screenshots (block screen, link flags, popup dashboard) for the report.
-- [ ] Regenerate the Defense Guide PDF to say **Horspool** (code already swapped from Aho-Corasick).
-- [ ] Options/settings page (sensitivity, manage brands, view/clear learned sites, whitelist).
-- [ ] Expand the protected brand list beyond the ~30 India-focused entries.
-- [x] Load the full UTS #39 confusables table (done — 1,624 folds bundled).
-- [x] Formal evaluation on a real Tranco + OpenPhish sample — see [`EVALUATION.md`](EVALUATION.md): **99.7% recall, 92.5% precision, 96.0% F1** vs 44–67% recall for a Levenshtein baseline; **0 false positives at the block threshold** on 50k legit domains; ~0.16 ms/verdict. Drove five engine improvements (Damerau–Levenshtein, mixed-script detection, multi-domain brands, corroborated brand-in-name, full Public Suffix List).
-- [x] Expand the confusables data — full **UTS #39 confusables table** (1,624 folds) now bundled (`src/data/confusablesMap.ts`), plus the **Public Suffix List** for ccTLD parsing (`src/data/publicSuffix.ts`).
-- Documentation: [`RESEARCH_GAP.md`](RESEARCH_GAP.md) (literature + positioning) · [`EVALUATION.md`](EVALUATION.md) (results) · [`COMPLEXITY.md`](COMPLEXITY.md) (Big-O analysis).
-
----
-
 ## 9. Future Roadmap
 
 - **Indic-script homoglyphs** (Kannada / Devanagari look-alikes).
