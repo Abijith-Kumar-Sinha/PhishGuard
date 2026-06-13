@@ -134,3 +134,24 @@ export async function setEnabled(on: boolean): Promise<void> {
     /* ignore */
   }
 }
+
+// ── Scoring engine shown in the popup: rule-based or the ML hybrid ─────────
+export type ScoreMode = 'rules' | 'ml'
+const SCOREMODE_KEY = 'pg_scoremode'
+
+export async function getScoreMode(): Promise<ScoreMode> {
+  try {
+    const r = await chrome.storage.local.get(SCOREMODE_KEY)
+    return (r[SCOREMODE_KEY] as ScoreMode | undefined) ?? 'rules'
+  } catch {
+    return 'rules'
+  }
+}
+
+export async function setScoreMode(m: ScoreMode): Promise<void> {
+  try {
+    await chrome.storage.local.set({ [SCOREMODE_KEY]: m })
+  } catch {
+    /* ignore */
+  }
+}
