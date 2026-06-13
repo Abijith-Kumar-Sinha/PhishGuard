@@ -1,0 +1,171 @@
+{
+  "generatedAt": "2026-06-13T17:30:22.280Z",
+  "datasets": {
+    "trancoNegatives": 50000,
+    "controlledPositives": 333,
+    "openphishHosts": 241,
+    "openphishResembling": 5
+  },
+  "confusion": {
+    "pgAny": {
+      "tp": 332,
+      "fn": 1,
+      "fp": 27,
+      "tn": 49973,
+      "recall": 0.996996996996997,
+      "precision": 0.924791086350975,
+      "fpr": 0.00054,
+      "f1": 0.9595375722543352,
+      "acc": 0.9994437049251982
+    },
+    "pgDanger": {
+      "tp": 84,
+      "fn": 249,
+      "fp": 0,
+      "tn": 50000,
+      "recall": 0.25225225225225223,
+      "precision": 1,
+      "fpr": 0,
+      "f1": 0.40287769784172656,
+      "acc": 0.9950529473705124
+    },
+    "levT1": {
+      "tp": 147,
+      "fn": 186,
+      "fp": 160,
+      "tn": 49840,
+      "recall": 0.44144144144144143,
+      "precision": 0.4788273615635179,
+      "fpr": 0.0032,
+      "f1": 0.459375,
+      "acc": 0.993125782289949
+    },
+    "levT2": {
+      "tp": 185,
+      "fn": 148,
+      "fp": 439,
+      "tn": 49561,
+      "recall": 0.5555555555555556,
+      "precision": 0.296474358974359,
+      "fpr": 0.00878,
+      "f1": 0.38662486938349006,
+      "acc": 0.9883376711104047
+    },
+    "levT3": {
+      "tp": 223,
+      "fn": 110,
+      "fp": 6593,
+      "tn": 43407,
+      "recall": 0.6696696696696697,
+      "precision": 0.03271713615023474,
+      "fpr": 0.13186,
+      "f1": 0.062386347740942795,
+      "acc": 0.8668269326286929
+    }
+  },
+  "perFamily": {
+    "homoglyph": {
+      "total": 56,
+      "pgAny": 56,
+      "pgDanger": 56,
+      "b1": 24,
+      "b2": 35,
+      "b3": 52,
+      "recallPg": 1
+    },
+    "typo": {
+      "total": 109,
+      "pgAny": 109,
+      "pgDanger": 0,
+      "b1": 71,
+      "b2": 94,
+      "b3": 102,
+      "recallPg": 1
+    },
+    "digit-swap": {
+      "total": 56,
+      "pgAny": 55,
+      "pgDanger": 0,
+      "b1": 24,
+      "b2": 28,
+      "b3": 36,
+      "recallPg": 0.9821428571428571
+    },
+    "combosquat": {
+      "total": 56,
+      "pgAny": 56,
+      "pgDanger": 28,
+      "b1": 0,
+      "b2": 0,
+      "b3": 0,
+      "recallPg": 1
+    },
+    "tld-swap": {
+      "total": 28,
+      "pgAny": 28,
+      "pgDanger": 0,
+      "b1": 28,
+      "b2": 28,
+      "b3": 28,
+      "recallPg": 1
+    },
+    "subdomain": {
+      "total": 28,
+      "pgAny": 28,
+      "pgDanger": 0,
+      "b1": 0,
+      "b2": 0,
+      "b3": 5,
+      "recallPg": 1
+    }
+  },
+  "falsePositives": {
+    "pgAny": 27,
+    "pgDanger": 0,
+    "levT1": 160,
+    "levT2": 439,
+    "levT3": 6593,
+    "examples": [
+      "googletagservices.com",
+      "onmicrosoft.com",
+      "s-microsoft.com",
+      "oneindia.com",
+      "kotaku.com",
+      "googll.store",
+      "google.cf",
+      "google.ml",
+      "google.tk",
+      "google.ga",
+      "googl.com",
+      "kodak.com",
+      "rappler.com",
+      "amazon.work",
+      "avple.tv",
+      "youtubers.me",
+      "xn--h-k9tybb8g5ivhkczry701afhpm4sru6d.net",
+      "paypay.ne.jp",
+      "adblock-for-youtube.com",
+      "ssyoutube.com",
+      "axisbank.co.in",
+      "paytr.com",
+      "go0gles.cc",
+      "instragram.com",
+      "gopay.co.id",
+      "goole.com",
+      "amazon-value-service.com"
+    ]
+  },
+  "openphish": {
+    "fullRecall": 0.02074688796680498,
+    "subsetRecall": 0,
+    "flaggedFull": 5,
+    "flaggedSubset": 0
+  },
+  "latencyMs": {
+    "mean": 0.19427151999999934,
+    "median": 0.1756999999997788,
+    "p95": 0.3623999999999796,
+    "p99": 0.5475999999998749,
+    "max": 2.7635000000000076
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "manifest_version": 3,
+  "name": "PhishGuard - Lookalike Domain Detector",
+  "version": "0.2.0",
+  "description": "Warns you in real time when a website is a lookalike of a trusted brand - including invisible Unicode homoglyph disguises.",
+  "permissions": ["tabs", "storage"],
+  "host_permissions": ["http://*/*", "https://*/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "PhishGuard",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*", "file:///*"],
+      "js": ["content.js"],
+      "run_at": "document_end",
+      "all_frames": false
+    }
+  ]
+}
