@@ -96,7 +96,40 @@ the official one — the same logic the rules hand-code.
 
 ---
 
-## 5. Honest caveats
+## 5. Full evaluation (5-fold cross-validation)
+
+Beyond the single split in §4, the model was evaluated with **stratified 5-fold
+cross-validation** using out-of-fold (OOF) predictions — 333 positives + 25,000
+negatives. Reproduce: `npx tsx scripts/ml/evaluate.ts`.
+
+| Metric | Value |
+|--------|-------|
+| **ROC-AUC** | **0.9998** |
+| **PR-AUC** (average precision) | **0.976** |
+| Recall (τ = 0.92) | 99.7 % |
+| Precision | 94.9 % |
+| FPR | 0.1 % |
+| **F1** | **97.2 %** |
+| F1 stability across folds | **97.2 % ± 0.5 pts** |
+| Confusion (OOF) | TP 332 · FP 18 · FN 1 · TN 24,982 |
+
+- **Per-family recall (OOF):** homoglyph 100 %, typo 99.1 %, digit-swap 100 %,
+  combosquat 100 %, tld-swap 100 %, subdomain 100 %.
+- **Not overfitting:** resubstitution F1 97.4 % vs out-of-fold 97.2 % — a **0.2-pt
+  gap**, so the model is not memorising the training set. The ±0.5-pt fold variance
+  confirms the single-split result wasn't luck.
+- **Ablation:** removing the 3 interaction features drops F1 from 97.2 % to 95.3 %
+  (ROC-AUC 0.9998 → 0.9996) — they contribute ~1.9 F1 points.
+- **Inference latency:** **0.16 ms/verdict** (feature extraction + dot product) — the
+  lightweight guarantee holds.
+- **External validity (honest limit):** on the live OpenPhish snapshot only ~2 hosts
+  even loosely resemble a *protected* brand, and those aren't true brand
+  impersonations — so a real-positive external test is currently inconclusive (0/2).
+  This is the strongest argument for the §6 next step: real labelled lookalikes.
+
+---
+
+## 6. Honest caveats
 
 - **Synthetic positives.** Training positives are generated, so the LR can learn the
   generator's quirks. The held-out split guards against gross overfitting, but real
@@ -110,7 +143,7 @@ the official one — the same logic the rules hand-code.
 
 ---
 
-## 6. Status & next steps
+## 7. Status & next steps
 
 - ✅ Feature extractor (`features.ts`), trainer (`scripts/ml/train.ts`), bundled model
   (`modelWeights.ts`), explainable inference (`mlScore.ts`), rule-vs-LR comparison.
