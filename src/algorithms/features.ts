@@ -10,7 +10,7 @@
 import { skeleton } from './confusables'
 import { weightedEditDistance, similarity } from './editDistance'
 import { findPatterns } from './horspool'
-import { parseHost, scriptOf, letterScriptsOf } from './scoring'
+import { parseHost, letterScriptsOf } from './scoring'
 import { BRANDS, SUSPICIOUS_TLDS, LURE_WORDS } from '../data/brands'
 
 // Stable feature order shared by the trainer and the inference path.

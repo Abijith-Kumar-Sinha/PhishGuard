@@ -168,9 +168,33 @@ function scanLinks() {
   return flagged
 }
 
+async function isEnabled(): Promise<boolean> {
+  try {
+    const r = await chrome.storage.local.get('pg_enabled')
+    return (r['pg_enabled'] as boolean | undefined) ?? true
+  } catch {
+    return true
+  }
+}
+
+// Remove everything PhishGuard injected (used when the user pauses protection).
+function teardown() {
+  document.getElementById('phishguard-host')?.remove()
+  document.getElementById('phishguard-bar')?.remove()
+  document.documentElement.style.overflow = ''
+  document.querySelectorAll('.pg-flag').forEach((e) => e.remove())
+  document.querySelectorAll<HTMLAnchorElement>('a[data-pg]').forEach((a) => {
+    a.removeAttribute('data-pg')
+    delete a.dataset.pgSeen
+  })
+}
+
 // ── Orchestrate ──────────────────────────────────────────────────────────
+let observing = false
+
 async function run() {
   if (window.top !== window.self) return
+  if (!(await isEnabled())) return // master switch: paused
   TRUSTED = await loadTrusted()
 
   const test = location.hash.match(/phishguard-test=([^&\s]+)/)
@@ -180,14 +204,25 @@ async function run() {
   if (v.level === 'dangerous') blockScreen(v)
   else if (v.level === 'suspicious' || (test && v.level !== 'safe')) topBar(v)
 
-  // Scan links now and again as the page grows (debounced).
+  // Scan links now and again as the page grows (debounced). Attach the
+  // observer only once, even if run() is re-invoked after re-enabling.
   scanLinks()
-  let t = 0
-  const obs = new MutationObserver(() => {
-    clearTimeout(t)
-    t = window.setTimeout(scanLinks, 600)
-  })
-  obs.observe(document.documentElement, { childList: true, subtree: true })
+  if (!observing) {
+    let t = 0
+    const obs = new MutationObserver(() => {
+      clearTimeout(t)
+      t = window.setTimeout(scanLinks, 600)
+    })
+    obs.observe(document.documentElement, { childList: true, subtree: true })
+    observing = true
+  }
 }
+
+// React to the master switch flipping without needing a page reload.
+chrome.storage.onChanged.addListener((changes, area) => {
+  if (area !== 'local' || !changes['pg_enabled']) return
+  if (changes['pg_enabled'].newValue === false) teardown()
+  else run()
+})
 
 run()

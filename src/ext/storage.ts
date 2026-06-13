@@ -112,3 +112,25 @@ export async function pushThreat(t: Threat): Promise<void> {
     /* ignore */
   }
 }
+
+// ── Master on/off switch ─────────────────────────────────────────────────
+// Lets the user pause all protection. On by default. Persisted in
+// chrome.storage.local so background + content scripts and the popup agree.
+export const ENABLED_KEY = 'pg_enabled'
+
+export async function getEnabled(): Promise<boolean> {
+  try {
+    const r = await chrome.storage.local.get(ENABLED_KEY)
+    return (r[ENABLED_KEY] as boolean | undefined) ?? true
+  } catch {
+    return true
+  }
+}
+
+export async function setEnabled(on: boolean): Promise<void> {
+  try {
+    await chrome.storage.local.set({ [ENABLED_KEY]: on })
+  } catch {
+    /* ignore */
+  }
+}

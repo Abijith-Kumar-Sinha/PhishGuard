@@ -4,7 +4,7 @@ import { createRoot } from 'react-dom/client'
 import { analyze, type Verdict, type Level } from '../algorithms/scoring'
 import type { EditOp } from '../algorithms/editDistance'
 import type { Brand } from '../data/brands'
-import { getTrustedBrands, trustedCount, getStats, getRecent, type Threat } from './storage'
+import { getTrustedBrands, trustedCount, getStats, getRecent, getEnabled, setEnabled, type Threat } from './storage'
 import './popup.css'
 
 const META: Record<Level, { label: string; color: string; icon: string }> = {
@@ -21,9 +21,11 @@ function Popup() {
   const [recent, setRecent] = useState<Threat[]>([])
   const [manual, setManual] = useState('')
   const [override, setOverride] = useState<string | null>(null)
+  const [enabled, setEnabledState] = useState(true)
 
   useEffect(() => {
     ;(async () => {
+      setEnabledState(await getEnabled())
       setTrusted(await getTrustedBrands())
       setLearned(await trustedCount())
       setStats(await getStats())
@@ -46,6 +48,12 @@ function Popup() {
     [target, trusted],
   )
 
+  const toggle = async () => {
+    const next = !enabled
+    setEnabledState(next)
+    await setEnabled(next)
+  }
+
   return (
     <div>
       <div className="hd">
@@ -54,7 +62,21 @@ function Popup() {
           <div className="name">Phish<span>Guard</span></div>
           <div className="sub">Lookalike-domain detector</div>
         </div>
+        <button
+          className={'switch' + (enabled ? ' on' : '')}
+          role="switch"
+          aria-checked={enabled}
+          aria-label="Toggle protection"
+          title={enabled ? 'Protection on — click to pause' : 'Protection paused — click to enable'}
+          onClick={toggle}
+        >
+          <span className="knob" />
+        </button>
       </div>
+
+      {!enabled && (
+        <div className="paused">⏸ Protection paused — sites are not being checked.</div>
+      )}
 
       {/* Stats dashboard */}
       <div className="stats">
