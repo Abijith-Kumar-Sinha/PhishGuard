@@ -112,3 +112,46 @@ export async function pushThreat(t: Threat): Promise<void> {
     /* ignore */
   }
 }
+
+// ── Master on/off switch ─────────────────────────────────────────────────
+// Lets the user pause all protection. On by default. Persisted in
+// chrome.storage.local so background + content scripts and the popup agree.
+export const ENABLED_KEY = 'pg_enabled'
+
+export async function getEnabled(): Promise<boolean> {
+  try {
+    const r = await chrome.storage.local.get(ENABLED_KEY)
+    return (r[ENABLED_KEY] as boolean | undefined) ?? true
+  } catch {
+    return true
+  }
+}
+
+export async function setEnabled(on: boolean): Promise<void> {
+  try {
+    await chrome.storage.local.set({ [ENABLED_KEY]: on })
+  } catch {
+    /* ignore */
+  }
+}
+
+// ── Scoring engine shown in the popup: rule-based or the ML hybrid ─────────
+export type ScoreMode = 'rules' | 'ml'
+const SCOREMODE_KEY = 'pg_scoremode'
+
+export async function getScoreMode(): Promise<ScoreMode> {
+  try {
+    const r = await chrome.storage.local.get(SCOREMODE_KEY)
+    return (r[SCOREMODE_KEY] as ScoreMode | undefined) ?? 'rules'
+  } catch {
+    return 'rules'
+  }
+}
+
+export async function setScoreMode(m: ScoreMode): Promise<void> {
+  try {
+    await chrome.storage.local.set({ [SCOREMODE_KEY]: m })
+  } catch {
+    /* ignore */
+  }
+}

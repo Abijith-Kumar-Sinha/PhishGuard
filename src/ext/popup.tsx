@@ -2,9 +2,10 @@
 import { useEffect, useMemo, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { analyze, type Verdict, type Level } from '../algorithms/scoring'
+import { predictML, type MLVerdict } from '../algorithms/mlScore'
 import type { EditOp } from '../algorithms/editDistance'
 import type { Brand } from '../data/brands'
-import { getTrustedBrands, trustedCount, getStats, getRecent, type Threat } from './storage'
+import { getTrustedBrands, trustedCount, getStats, getRecent, getEnabled, setEnabled, getScoreMode, setScoreMode, type ScoreMode, type Threat } from './storage'
 import './popup.css'
 
 const META: Record<Level, { label: string; color: string; icon: string }> = {
@@ -21,9 +22,13 @@ function Popup() {
   const [recent, setRecent] = useState<Threat[]>([])
   const [manual, setManual] = useState('')
   const [override, setOverride] = useState<string | null>(null)
+  const [enabled, setEnabledState] = useState(true)
+  const [mode, setMode] = useState<ScoreMode>('rules')
 
   useEffect(() => {
     ;(async () => {
+      setEnabledState(await getEnabled())
+      setMode(await getScoreMode())
       setTrusted(await getTrustedBrands())
       setLearned(await trustedCount())
       setStats(await getStats())
@@ -45,6 +50,20 @@ function Popup() {
     () => (target ? analyze(target, trusted) : null),
     [target, trusted],
   )
+  const mlVerdict = useMemo<MLVerdict | null>(
+    () => (target && mode === 'ml' ? predictML(target) : null),
+    [target, mode],
+  )
+
+  const toggle = async () => {
+    const next = !enabled
+    setEnabledState(next)
+    await setEnabled(next)
+  }
+  const switchMode = async (m: ScoreMode) => {
+    setMode(m)
+    await setScoreMode(m)
+  }
 
   return (
     <div>
@@ -54,7 +73,21 @@ function Popup() {
           <div className="name">Phish<span>Guard</span></div>
           <div className="sub">Lookalike-domain detector</div>
         </div>
+        <button
+          className={'switch' + (enabled ? ' on' : '')}
+          role="switch"
+          aria-checked={enabled}
+          aria-label="Toggle protection"
+          title={enabled ? 'Protection on — click to pause' : 'Protection paused — click to enable'}
+          onClick={toggle}
+        >
+          <span className="knob" />
+        </button>
       </div>
+
+      {!enabled && (
+        <div className="paused">⏸ Protection paused — sites are not being checked.</div>
+      )}
 
       {/* Stats dashboard */}
       <div className="stats">
@@ -64,14 +97,22 @@ function Popup() {
       </div>
 
       <div className="section">
-        <div className="lbl">{override ? 'Checked domain' : 'Current tab'}</div>
-        {verdict ? (
-          <VerdictBlock v={verdict} />
-        ) : (
+        <div className="lblrow">
+          <div className="lbl">{override ? 'Checked domain' : 'Current tab'}</div>
+          <div className="modeseg" role="tablist" aria-label="Scoring engine">
+            <button className={mode === 'rules' ? 'active' : ''} onClick={() => switchMode('rules')}>Rules</button>
+            <button className={mode === 'ml' ? 'active' : ''} onClick={() => switchMode('ml')}>ML</button>
+          </div>
+        </div>
+        {!target ? (
           <div className="muted" style={{ fontSize: 13, padding: '6px 0' }}>
             Open a website to see its safety verdict, or check any domain below.
           </div>
-        )}
+        ) : mode === 'ml' && mlVerdict ? (
+          <MLVerdictBlock v={mlVerdict} />
+        ) : verdict ? (
+          <VerdictBlock v={verdict} />
+        ) : null}
       </div>
 
       <div className="divider" />
@@ -126,6 +167,67 @@ function Stat({ n, l, c }: { n: number; l: string; c: string }) {
     <div className="stat">
       <div className="snum" style={{ color: c }}>{n}</div>
       <div className="slab">{l}</div>
+    </div>
+  )
+}
+
+const FRIENDLY: Record<string, string> = {
+  bestSim: 'Resembles a brand',
+  simUnofficial: 'Looks like a brand, not official',
+  homoglyph: 'Homoglyph disguise',
+  mixedScript: 'Mixed scripts',
+  skelExact: 'Exact brand once un-disguised',
+  embedLure: 'Brand + lure word',
+  subBrand: 'Brand in a sub-domain',
+  subUnofficial: 'Brand sub-domain, not official',
+  embedded: 'Brand inside a longer name',
+  tldSuspicious: 'Throwaway TLD',
+  lureCount: 'Urgency / lure words',
+  digitRatio: 'Digits in the name',
+  hyphenCount: 'Hyphens in the name',
+  nearestTranspose: 'Swapped letters',
+  nearestVisual: 'Digit/letter look-alike',
+  official: 'Official domain',
+  exactCore: 'Brand name on another domain',
+  homoglyphCount: 'Disguised characters',
+  sldLen: 'Name length',
+}
+
+function MLVerdictBlock({ v }: { v: MLVerdict }) {
+  const m = META[v.level]
+  const top = v.contributions.filter((c) => Math.abs(c.contribution) > 0.05).slice(0, 4)
+  const maxAbs = Math.max(...top.map((c) => Math.abs(c.contribution)), 0.01)
+  return (
+    <div>
+      <div className="verdict" style={{ background: `${m.color}1f` }}>
+        <div className="vbadge" style={{ background: m.color }}>{m.icon}</div>
+        <div style={{ minWidth: 0 }}>
+          <div className="vlevel" style={{ color: m.color }}>{m.label}</div>
+          <div className="vhost mono muted">{v.host}</div>
+        </div>
+        <div className="vscore" style={{ color: m.color }}>
+          {Math.round(v.probability * 100)}<span style={{ fontSize: 11 }}>%</span>
+        </div>
+      </div>
+
+      <div className="lbl" style={{ marginTop: 12 }}>Why — top signals</div>
+      <div className="contribs">
+        {top.map((c, i) => {
+          const pos = c.contribution >= 0
+          return (
+            <div key={i} className="contrib">
+              <span className="cname">{FRIENDLY[c.feature] ?? c.feature}</span>
+              <span className="cbar">
+                <span className="cfill" style={{ width: `${(Math.abs(c.contribution) / maxAbs) * 100}%`, background: pos ? '#f43f5e' : '#34d399' }} />
+              </span>
+              <span className="cval" style={{ color: pos ? '#f43f5e' : '#34d399' }}>{pos ? '+' : ''}{c.contribution.toFixed(2)}</span>
+            </div>
+          )
+        })}
+      </div>
+      <div className="muted" style={{ fontSize: 10.5, marginTop: 8 }}>
+        Logistic-regression hybrid · red pushes toward phishing, green toward safe
+      </div>
     </div>
   )
 }

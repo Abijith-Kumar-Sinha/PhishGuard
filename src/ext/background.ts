@@ -1,6 +1,6 @@
 /// <reference types="chrome" />
 import { analyze, type Level } from '../algorithms/scoring'
-import { getTrustedBrands, recordVisit, bumpScanned, pushThreat } from './storage'
+import { getTrustedBrands, recordVisit, bumpScanned, pushThreat, getEnabled, ENABLED_KEY } from './storage'
 
 const BADGE: Record<Level, { text: string; color: string }> = {
   safe: { text: '', color: '#34d399' },
@@ -20,6 +20,11 @@ function hostFromUrl(url: string): string | null {
 
 async function checkTab(tabId: number, url: string | undefined, count: boolean) {
   if (!url) return
+  // Master switch: when paused, clear the badge and do nothing else.
+  if (!(await getEnabled())) {
+    chrome.action.setBadgeText({ tabId, text: '' }).catch(() => {})
+    return
+  }
   const host = hostFromUrl(url)
   if (!host) {
     chrome.action.setBadgeText({ tabId, text: '' }).catch(() => {})
@@ -66,4 +71,15 @@ chrome.tabs.onActivated.addListener(async ({ tabId }) => {
 
 chrome.runtime.onInstalled.addListener(() => {
   chrome.action.setBadgeTextColor?.({ color: '#0a0b12' }).catch(() => {})
+})
+
+// Re-evaluate the active tab's badge immediately when the switch is toggled.
+chrome.storage.onChanged.addListener((changes, area) => {
+  if (area !== 'local' || !changes[ENABLED_KEY]) return
+  chrome.tabs
+    .query({ active: true, currentWindow: true })
+    .then(([tab]) => {
+      if (tab?.id != null) checkTab(tab.id, tab.url, false)
+    })
+    .catch(() => {})
 })

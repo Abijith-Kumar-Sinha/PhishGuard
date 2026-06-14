@@ -42,7 +42,7 @@ export interface Verdict {
 }
 
 // Common two-level public suffixes, so a brand on a ccTLD (amazon.co.jp,
-function scriptOf(ch: string): string {
+export function scriptOf(ch: string): string {
   const c = ch.codePointAt(0) ?? 0
   if (c >= 0x0400 && c <= 0x04ff) return 'Cyrillic'
   if (c >= 0x0370 && c <= 0x03ff) return 'Greek'
@@ -54,7 +54,7 @@ function scriptOf(ch: string): string {
 // The set of letter-scripts present in a label (combining marks ignored, so an
 // accented Latin letter like 'ü' counts as Latin, not a separate script). Used
 // for UTS #39 mixed-script detection.
-function letterScriptsOf(label: string): Set<string> {
+export function letterScriptsOf(label: string): Set<string> {
   const scripts = new Set<string>()
   for (const ch of label.normalize('NFD')) {
     if (/\p{M}/u.test(ch)) continue // combining diacritical mark
@@ -66,7 +66,7 @@ function letterScriptsOf(label: string): Set<string> {
 
 const ASCII_ONLY = /^[\x00-\x7f]*$/
 
-function parseHost(input: string) {
+export function parseHost(input: string) {
   let host = input.trim().toLowerCase()
   host = host.replace(/^[a-z][a-z0-9+.-]*:\/\//, '') // strip scheme
   host = host.split('/')[0].split('?')[0].split('#')[0]
