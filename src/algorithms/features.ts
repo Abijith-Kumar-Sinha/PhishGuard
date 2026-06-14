@@ -10,6 +10,7 @@
 import { skeleton } from './confusables'
 import { weightedEditDistance, similarity } from './editDistance'
 import { findPatterns } from './horspool'
+import { improbability } from './ngram'
 import { parseHost, letterScriptsOf } from './scoring'
 import { BRANDS, SUSPICIOUS_TLDS, LURE_WORDS } from '../data/brands'
 
@@ -36,6 +37,7 @@ export const FEATURE_NAMES = [
   'simUnofficial', // bestSim x (1 - official): looks like a brand but isn't it
   'embedLure', // brand embedded AND a lure word present (combosquat)
   'subUnofficial', // brand in a sub-domain AND not an official domain
+  'ngramImprob', // bigram surprisal: how unlike a real domain label it looks
 ] as const
 
 const ASCII_ONLY = /^[\x00-\x7f]*$/
@@ -119,6 +121,7 @@ export function extractFeatures(input: string): FeatureVector {
     bestSim * (1 - official),
     embedded * (lureCount > 0 ? 1 : 0),
     subBrand * (1 - official),
+    improbability(sldSkel),
   ]
   return { names: FEATURE_NAMES, values }
 }

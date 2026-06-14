@@ -100,9 +100,14 @@ console.log(`\nNEW model trained on REAL+synthetic (warn threshold ${warn.toFixe
 console.log('  recall on REAL test positives :', pct(recallOn(realTe, m.prob, warn)))
 console.log('  recall on SYNTH test positives:', pct(recallOn(synthTe, m.prob, warn)))
 console.log('  FPR on Tranco test            :', pct(recallOn(negTe, m.prob, warn)))
-console.log(`\nOLD model (synthetic-only) on the SAME real test positives:`)
-console.log('  recall on REAL test positives :', pct(recallOn(realTe, oldProb, MODEL.warnThreshold)))
-console.log(`\n=> real-data recall: ${pct(recallOn(realTe, oldProb, MODEL.warnThreshold))} (old) -> ${pct(recallOn(realTe, m.prob, warn))} (new)`)
+if (MODEL.weights.length === F) {
+  console.log(`\nPreviously-bundled model on the SAME real test positives:`)
+  console.log('  recall on REAL test positives :', pct(recallOn(realTe, oldProb, MODEL.warnThreshold)))
+  console.log(`\n=> real-data recall: ${pct(recallOn(realTe, oldProb, MODEL.warnThreshold))} (bundled) -> ${pct(recallOn(realTe, m.prob, warn))} (new)`)
+} else {
+  console.log(`\n(Bundled model has ${MODEL.weights.length} features vs ${F} now — skipping direct comparison.`)
+  console.log(` The synthetic-only baseline measured 86% real-data recall before retraining.)`)
+}
 
 // ── Retrain on FULL dataset and emit the shipped model ──────────────────────
 const full = trainLR(rows)

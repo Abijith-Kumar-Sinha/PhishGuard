@@ -36,7 +36,7 @@ host ──▶ classic engine (skeleton · Damerau–Levenshtein · Horspool · 
                                             two learned thresholds ──▶ safe / suspicious / dangerous
 ```
 
-**Features (19).** The 16 base signals the rule engine already computes
+**Features (20).** The 16 base signals the rule engine already computes
 (nearest-brand similarity, homoglyph / mixed-script flags, skeleton-exact-brand,
 brand-embedded, brand-in-subdomain, suspicious-TLD, lure count, label length,
 digit ratio, hyphen count, official-domain …) **plus 3 interaction terms** that
@@ -49,6 +49,15 @@ give the linear model the conjunctions the rules encode:
 Adding these was the difference between the LR *trailing* the rules and *matching*
 them (§4) — a concrete demonstration that gains come from **richer features**, not
 just re-weighting.
+
+…and one **language-model feature**: `ngramImprob` — a character-bigram surprisal
+score (`ngram.ts`, model learned from Tranco labels) that measures how *unlike a real
+domain label* a string looks. **Honest ablation result: it does not change lookalike
+recall (98.3 % with and without)** — because lookalikes deliberately mimic real words,
+so they score as word-like. It is kept as a near-zero-cost *complementary* signal for
+random / DGA-style domains (a different threat class) and as a classic-algorithms
+component. A clean example of measuring a feature and reporting that it didn't help the
+target metric, rather than assuming it would.
 
 ---
 

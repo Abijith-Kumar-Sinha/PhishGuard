@@ -3,11 +3,11 @@
 // positives. Inference = sigmoid(w·z + b), z = (features - mean)/std.
 // Trained 2026-06-14 on 579 real + 333 synthetic positives.
 export const MODEL = {
-  features: ["bestSim","nearestVisual","nearestTranspose","homoglyph","mixedScript","homoglyphCount","skelExact","exactCore","embedded","subBrand","tldSuspicious","lureCount","sldLen","digitRatio","hyphenCount","official","simUnofficial","embedLure","subUnofficial"],
-  mean: [0.370075, 0.345753, 0.023963, 0.002769, 0.001139, 0.005657, 0.002278, 0.000668, 0.007405, 0.00055, 0.018836, 0.011255, 8.172317, 0.023685, 0.084577, 0.005893, 0.364638, 0.001179, 0.00055],
-  std: [0.112233, 0.475613, 0.152934, 0.052553, 0.033733, 0.118289, 0.047679, 0.025834, 0.085733, 0.023445, 0.135947, 0.107701, 3.680786, 0.106257, 0.312058, 0.076536, 0.106479, 0.034309, 0.023445],
-  weights: [1.051845, -0.297738, 0.052534, 0.568028, 0.310172, 0.09382, 0.568326, -0.048094, 0.023312, 0.278983, -0.039965, 0.073407, -0.327379, 0.281128, 0.15152, -0.103841, 1.18091, 0.323495, 0.278983],
-  bias: -5.240004,
+  features: ["bestSim","nearestVisual","nearestTranspose","homoglyph","mixedScript","homoglyphCount","skelExact","exactCore","embedded","subBrand","tldSuspicious","lureCount","sldLen","digitRatio","hyphenCount","official","simUnofficial","embedLure","subUnofficial","ngramImprob"],
+  mean: [0.370075, 0.345753, 0.023963, 0.002769, 0.001139, 0.005657, 0.002278, 0.000668, 0.007405, 0.00055, 0.018836, 0.011255, 8.172317, 0.023685, 0.084577, 0.005893, 0.364638, 0.001179, 0.00055, 2.893633],
+  std: [0.112233, 0.475613, 0.152934, 0.052553, 0.033733, 0.118289, 0.047679, 0.025834, 0.085733, 0.023445, 0.135947, 0.107701, 3.680786, 0.106257, 0.312058, 0.076536, 0.106479, 0.034309, 0.023445, 0.365958],
+  weights: [1.045721, -0.304358, 0.046455, 0.56589, 0.308795, 0.080725, 0.566394, -0.043974, 0.022801, 0.278034, -0.04113, 0.080327, -0.251615, 0.130556, 0.111118, -0.090257, 1.164245, 0.318049, 0.278034, 0.375176],
+  bias: -5.19885,
   warnThreshold: 0.940,
   blockThreshold: 0.995,
 } as const
