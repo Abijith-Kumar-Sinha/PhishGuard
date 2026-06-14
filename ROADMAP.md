@@ -7,19 +7,23 @@ item. Ratings are relative to a solo student project.
 a possible paper, or real users.
 **Difficulty:** Easy (hours) · Medium (a day-ish) · Hard (days–weeks).
 
-Current state: rule engine 99.7 % recall / 92.5 % precision / 0 block-FPs; Tier-1 ML
-hybrid trained + cross-validated (ROC-AUC 0.9998); on/off + Rules/ML popup switch.
-`main` = clean DAA build; `phase-c-ml` = toggle + ML (pushed, unmerged).
+Current state (2026-06-14): rule engine 99.7 % recall / 92.5 % precision / 0 block-FPs;
+Tier-1 ML hybrid trained + cross-validated (ROC-AUC 0.9998, F1 97.2 %); on/off switch +
+live Rules/ML popup toggle. All merged to `main` and pushed.
+
+Recently hardened (live-testing fixes): short brand cores now caught as hyphen tokens
+(`sbi-rewards.online`); "Threats blocked" now counts each block screen actually shown;
+learned sites' alternate TLDs no longer false-flagged (`github.community`, `github.io`).
 
 ---
 
 ## Phase 0 — Ship the submission (do first)
 
-| Item | What | Impact | Difficulty | Effort |
-|------|------|:------:|:----------:|--------|
-| Merge `phase-c-ml` → `main` | Bring toggle + ML into the live repo (reconcile the README web-edit first) | 🟡 | Easy | 15 min |
-| Report screenshots | Block screen, inline link flags, popup (Rules **and** ML mode) for the write-up | 🟢 | Easy | 30 min |
-| Defense Guide PDF | Regenerate so it says **Horspool** (code already swapped from Aho-Corasick) | 🟡 | Easy | 20 min |
+| Item | What | Status | Impact | Difficulty |
+|------|------|:------:|:------:|:----------:|
+| Merge `phase-c-ml` → `main` | Bring toggle + ML into the live repo | ✅ done | 🟡 | Easy |
+| Report screenshots | Block screen ✅ · inline link flags ✅ · popup Rules/ML (in progress) | 🔄 2 / 4 | 🟢 | Easy |
+| Defense Guide PDF | Regenerate so it says **Horspool** (code already swapped from Aho-Corasick) | ⬜ todo | 🟡 | Easy |
 
 **Why first:** these finish the deliverable you're actually graded on, with near-zero
 risk. Nothing here needs new code — just packaging.
