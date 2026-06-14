@@ -16,6 +16,7 @@ extension-dist
 # Evaluation: large raw downloads + regenerable caches (run scripts/eval/prep.ts).
 # results.json is kept (small, citable in EVALUATION.md).
 data-eval/raw/
+data-eval/dnstwist/
 data-eval/tranco-top.txt
 data-eval/openphish-hosts.txt
 

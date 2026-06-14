@@ -158,6 +158,44 @@ anti-phishing engine.
 
 ---
 
+## 6.1 Real-data validation — registered lookalikes (dnstwist)
+
+The strongest test: do the verdicts hold on **real, registered** look-alike domains,
+not just the synthetic generator? We harvested registered look-alikes of the protected
+brands with **dnstwist** — it permutes a brand across many attack families and keeps
+only domains that actually **resolve in DNS** — giving **579 real registered
+look-alikes** (9 brands, harvest snapshot) as positives, against the same 50,000
+Tranco negatives.
+
+| detector | recall | precision | FPR | F1 |
+|----------|-------:|----------:|----:|---:|
+| **Rule engine (suspicious+)** | **97.4 %** | 95.4 % | 0.1 % | **96.4 %** |
+| Rule engine (dangerous) | 14.5 % | 100.0 % | 0.0 % | — |
+| LR hybrid (warn) | 87.4 % | 95.7 % | 0.0 % | 91.3 % |
+
+Recall by dnstwist family (rule engine): homoglyph 98 %; replacement, insertion,
+bitsquatting, addition, omission, transposition, repetition, vowel-swap, hyphenation,
+cyrillic — **100 %**. The misses are dnstwist's `subdomain` dot-split (`pay.pal.com`,
+where the registrable is actually `pal.com` — a weak positive), a couple of
+multi-character homoglyphs (`paytrn.com`, m↔rn — a known limitation), and an
+un-corroborated combosquat (`icicibankcom.com`).
+
+**Two findings:**
+
+1. **The rule engine generalises to real data** — 96.4 % F1 on real registered
+   look-alikes, essentially matching the synthetic 96.0 %. The result is not an
+   artefact of the generator.
+2. **The LR hybrid generalises *worse* than the rules on real data** (87.4 % vs
+   97.4 % recall) — because it was trained on the *synthetic* positives and overfit to
+   those families. This confirms the synthetic-training caveat (`ML.md §6`)
+   empirically, and points to the fix: **retrain the LR on real registered
+   look-alikes.** The hand-crafted rules, encoding general structural signals, transfer
+   cleanly.
+
+*Reproduce: dnstwist harvest → `npx tsx scripts/eval/realdata.ts`.*
+
+---
+
 ## 7. Performance (non-functional requirement: verdict < 5 ms)
 
 Per-`analyze()` latency over all 50,000 Tranco domains:

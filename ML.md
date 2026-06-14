@@ -131,11 +131,12 @@ negatives. Reproduce: `npx tsx scripts/ml/evaluate.ts`.
 
 ## 6. Honest caveats
 
-- **Synthetic positives.** Training positives are generated, so the LR can learn the
-  generator's quirks. The held-out split guards against gross overfitting, but real
-  labelled lookalikes (dnstwist permutations cross-checked against actually-registered
-  domains, or a filtered PhishTank/URLhaus sample) would make the numbers more
-  trustworthy. This is the top "what's next" item.
+- **Synthetic positives — now confirmed empirically.** Training positives are
+  generated, so the LR learns the generator's quirks. Tested on **579 real registered
+  look-alikes** (dnstwist; see `EVALUATION.md §6.1`), the LR's recall drops to **87.4 %
+  while the rule engine holds at 97.4 %** — the LR generalises *worse* than the rules
+  because it overfit to the synthetic families. The fix is direct: **retrain the LR on
+  the real dnstwist positives** (top "what's next" item).
 - **Linear ceiling.** A linear model can only represent the interactions we hand it as
   features. Non-linear models (gradient-boosted trees, or the Tier-2 visual/Siamese
   network) could push further — at the cost of size and the explainability/offline

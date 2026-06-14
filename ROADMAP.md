@@ -32,16 +32,17 @@ risk. Nothing here needs new code — just packaging.
 
 ## Phase 1 — Strengthen the evidence (paper-grade)
 
-| Item | What | Impact | Difficulty | Effort |
-|------|------|:------:|:----------:|--------|
-| **Real attack dataset** | Replace synthetic positives: dnstwist permutations cross-checked against *actually-registered* domains, and/or a brand-filtered URLhaus/PhishTank sample | 🟢 | Medium | ½ day |
-| New ML features | Character **n-gram improbability** of the SLD (real brands aren't random strings) + brand-popularity weighting — the lever to push *past* the rules | 🟢 | Medium | ½ day |
-| By-brand split | Train on some brands' lookalikes, test on **unseen** brands — proves generalization, not memorization | 🟡 | Easy | 1 hr |
-| Bigger, weighted brand list | Grow beyond the ~30 India-focused brands; add popularity weights | 🟡 | Easy–Med | 2 hr |
+| Item | What | Status | Impact | Difficulty |
+|------|------|:------:|:------:|:----------:|
+| **Real attack dataset + eval** | dnstwist registered look-alikes vs Tranco. **Result: rules 96.4 % F1 / 97.4 % recall on 579 real look-alikes** (`EVALUATION.md §6.1`) — validated. | ✅ done | 🟢 | Medium |
+| **Retrain LR on real positives** | Real eval exposed the LR overfitting to synthetic (87 % vs rules' 97 % recall). Retrain on the dnstwist set → should close the gap. **New top priority.** | ⬜ next | 🟢 | Medium |
+| New ML features | Character **n-gram improbability** of the SLD + brand-popularity weighting — the lever to push *past* the rules | ⬜ todo | 🟢 | Medium |
+| By-brand split | Train on some brands' look-alikes, test on **unseen** brands — proves generalization | ⬜ todo | 🟡 | Easy |
+| Bigger, weighted brand list | Grow beyond the ~30 India-focused brands; add popularity weights | ⬜ todo | 🟡 | Easy–Med |
 
-**Why:** the one honest gap in the current ML evaluation is that positives are
-synthetic. Real positives + a by-brand split would make the numbers airtight — the
-single biggest credibility upgrade, and the prerequisite for a paper.
+**Why:** the synthetic-positives gap is now *closed for the rule engine* (validated on
+real data) and *quantified for the LR* (it overfit). Retraining the LR on the real
+positives is the immediate, high-value next step toward paper-grade numbers.
 
 ---
 
