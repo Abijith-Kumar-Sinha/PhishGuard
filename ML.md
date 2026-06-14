@@ -129,6 +129,12 @@ negatives. Reproduce: `npx tsx scripts/ml/evaluate.ts`.
   confirms the single-split result wasn't luck.
 - **Ablation:** removing the 3 interaction features drops F1 from 97.2 % to 95.3 %
   (ROC-AUC 0.9998 → 0.9996) — they contribute ~1.9 F1 points.
+- **Generalizes to unseen brands (leave-one-brand-out CV).** Holding out an *entire*
+  brand from training and testing on its real look-alikes
+  (`scripts/ml/bybrand.ts`): per-brand recall 91–99.5 %, **macro-average 96.8 % at
+  0.1 % FPR**. The model never sees the test brand in training, so this proves it
+  learned *transferable* look-alike signals (similarity, homoglyph, structure) rather
+  than memorizing specific brands.
 - **Inference latency:** **0.16 ms/verdict** (feature extraction + dot product) — the
   lightweight guarantee holds.
 - **External validity (honest limit):** on the live OpenPhish snapshot only ~2 hosts
