@@ -1,6 +1,6 @@
 /// <reference types="chrome" />
 import { analyze, type Level } from '../algorithms/scoring'
-import { getTrustedBrands, recordVisit, bumpScanned, pushThreat, getEnabled, ENABLED_KEY } from './storage'
+import { getTrustedBrands, recordVisit, bumpScanned, recordBlock, getEnabled, ENABLED_KEY } from './storage'
 
 const BADGE: Record<Level, { text: string; color: string }> = {
   safe: { text: '', color: '#34d399' },
@@ -39,15 +39,9 @@ async function checkTab(tabId: number, url: string | undefined, count: boolean) 
   chrome.action.setBadgeBackgroundColor({ tabId, color: b.color }).catch(() => {})
 
   if (count) {
-    await bumpScanned(v.level === 'dangerous')
-    if (v.level === 'dangerous') {
-      await pushThreat({
-        host: v.host,
-        brand: v.brand ? v.brand.name : 'a brand',
-        score: v.score,
-        ts: Date.now(),
-      })
-    }
+    // Count every page scanned. "Threats blocked" is counted separately, when
+    // the content script actually shows a block screen (see onMessage below).
+    await bumpScanned(false)
     if (v.level === 'safe') {
       const registrable = v.sld + (v.tld ? '.' + v.tld : '')
       await recordVisit(registrable, v.sld)
@@ -71,6 +65,13 @@ chrome.tabs.onActivated.addListener(async ({ tabId }) => {
 
 chrome.runtime.onInstalled.addListener(() => {
   chrome.action.setBadgeTextColor?.({ color: '#0a0b12' }).catch(() => {})
+})
+
+// The content script reports each block screen it shows → count it + record it.
+chrome.runtime.onMessage.addListener((msg) => {
+  if (msg?.type === 'pg-block' && msg.host) {
+    recordBlock({ host: msg.host, brand: msg.brand ?? 'a brand', score: msg.score ?? 0, ts: Date.now() })
+  }
 })
 
 // Re-evaluate the active tab's badge immediately when the switch is toggled.

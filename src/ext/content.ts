@@ -47,6 +47,10 @@ function glyphHtml(host: string): string {
 // ── 1. Full-screen block screen ──────────────────────────────────────────
 function blockScreen(v: Verdict) {
   if (document.getElementById('phishguard-host')) return
+  // Tell the background a block was actually shown, so "Threats blocked" counts it.
+  chrome.runtime
+    .sendMessage({ type: 'pg-block', host: v.host, brand: v.brand ? v.brand.name : 'a brand', score: v.score })
+    .catch(() => {})
   const brand = v.brand ? v.brand.name : 'a trusted site'
   const homo = v.homoglyphs.length
     ? `<div class="pg-note">Disguised with ${v.homoglyphs.length} look-alike character${v.homoglyphs.length > 1 ? 's' : ''}: real address is <b>${v.skeleton}</b></div>`

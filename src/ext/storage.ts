@@ -113,6 +113,20 @@ export async function pushThreat(t: Threat): Promise<void> {
   }
 }
 
+// A block screen was actually shown — count it and record the threat. This is
+// the source of truth for "Threats blocked" (reported by the content script),
+// so the counter reflects blocks the user really saw, including the test hook.
+export async function recordBlock(t: Threat): Promise<void> {
+  const s = await getStats()
+  s.blocked++
+  try {
+    await chrome.storage.local.set({ [STATS]: s })
+  } catch {
+    /* ignore */
+  }
+  await pushThreat(t)
+}
+
 // ── Master on/off switch ─────────────────────────────────────────────────
 // Lets the user pause all protection. On by default. Persisted in
 // chrome.storage.local so background + content scripts and the popup agree.
