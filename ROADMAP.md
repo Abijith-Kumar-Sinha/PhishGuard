@@ -35,7 +35,7 @@ risk. Nothing here needs new code — just packaging.
 | Item | What | Status | Impact | Difficulty |
 |------|------|:------:|:------:|:----------:|
 | **Real attack dataset + eval** | dnstwist registered look-alikes vs Tranco. **Result: rules 96.4 % F1 / 97.4 % recall on 579 real look-alikes** (`EVALUATION.md §6.1`) — validated. | ✅ done | 🟢 | Medium |
-| **Retrain LR on real positives** | Real eval exposed the LR overfitting to synthetic (87 % vs rules' 97 % recall). Retrain on the dnstwist set → should close the gap. **New top priority.** | ⬜ next | 🟢 | Medium |
+| **Retrain LR on real positives** | Done — retrained on real + synthetic; held-out real-data recall **86 % → 98.3 %** at 0.1 % FPR, matching the rules (`scripts/ml/train-real.ts`). | ✅ done | 🟢 | Medium |
 | New ML features | Character **n-gram improbability** of the SLD + brand-popularity weighting — the lever to push *past* the rules | ⬜ todo | 🟢 | Medium |
 | By-brand split | Train on some brands' look-alikes, test on **unseen** brands — proves generalization | ⬜ todo | 🟡 | Easy |
 | Bigger, weighted brand list | Grow beyond the ~30 India-focused brands; add popularity weights | ⬜ todo | 🟡 | Easy–Med |

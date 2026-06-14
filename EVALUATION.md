@@ -185,14 +185,16 @@ un-corroborated combosquat (`icicibankcom.com`).
 1. **The rule engine generalises to real data** — 96.4 % F1 on real registered
    look-alikes, essentially matching the synthetic 96.0 %. The result is not an
    artefact of the generator.
-2. **The LR hybrid generalises *worse* than the rules on real data** (87.4 % vs
-   97.4 % recall) — because it was trained on the *synthetic* positives and overfit to
-   those families. This confirms the synthetic-training caveat (`ML.md §6`)
-   empirically, and points to the fix: **retrain the LR on real registered
-   look-alikes.** The hand-crafted rules, encoding general structural signals, transfer
-   cleanly.
+2. **The LR hybrid initially generalised *worse* than the rules** (87 % vs 97 %
+   recall) — it had been trained on *synthetic* positives and overfit to those
+   families. **This was then fixed:** retraining the LR on real + synthetic positives
+   (`scripts/ml/train-real.ts`) lifted held-out real-data recall **86 % → 98.3 %** at
+   0.1 % FPR, matching the rules. The bundled model now trains on real data. A textbook
+   demonstration that real training data — not just re-weighting — is what closes the
+   gap.
 
-*Reproduce: dnstwist harvest → `npx tsx scripts/eval/realdata.ts`.*
+*Reproduce: dnstwist harvest → `npx tsx scripts/eval/realdata.ts` (eval) and
+`npx tsx scripts/ml/train-real.ts` (retrain).*
 
 ---
 

@@ -131,12 +131,12 @@ negatives. Reproduce: `npx tsx scripts/ml/evaluate.ts`.
 
 ## 6. Honest caveats
 
-- **Synthetic positives — now confirmed empirically.** Training positives are
-  generated, so the LR learns the generator's quirks. Tested on **579 real registered
-  look-alikes** (dnstwist; see `EVALUATION.md §6.1`), the LR's recall drops to **87.4 %
-  while the rule engine holds at 97.4 %** — the LR generalises *worse* than the rules
-  because it overfit to the synthetic families. The fix is direct: **retrain the LR on
-  the real dnstwist positives** (top "what's next" item).
+- **Synthetic positives — found *and fixed*.** Training only on generated positives
+  made the LR overfit: on **579 real registered look-alikes** (dnstwist) its recall was
+  **86 %** vs the rule engine's 97 %. **Retraining on real + synthetic positives**
+  (`scripts/ml/train-real.ts`) lifted held-out real-data recall **86 % → 98.3 %** at
+  0.1 % FPR — now on par with the rules. The bundled `modelWeights.ts` is trained on
+  real + synthetic data. (More harvested brands would strengthen it further.)
 - **Linear ceiling.** A linear model can only represent the interactions we hand it as
   features. Non-linear models (gradient-boosted trees, or the Tier-2 visual/Siamese
   network) could push further — at the cost of size and the explainability/offline
