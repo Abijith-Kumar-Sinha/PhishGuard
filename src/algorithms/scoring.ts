@@ -188,8 +188,16 @@ export function analyze(input: string, extraBrands: Brand[] = []): Verdict {
     impersonated = skelCoreBrand
     add('Skeleton matches a brand', `'${sld}' normalises to '${skelCoreBrand.core}' — a disguised copy of ${skelCoreBrand.name}.`, 0.4)
   } else if (exactCoreBrand && !officialByDomain) {
-    impersonated = exactCoreBrand
-    add('Brand name on a non-official domain', `Uses '${exactCoreBrand.core}' but the domain ${registrable} is not the official ${exactCoreBrand.domain}.`, tldSuspicious ? 0.5 : 0.32)
+    // A learned ("your site") brand often spans several legitimate TLDs
+    // (github.com, github.io, github.community). For those, only flag a
+    // different-TLD match when corroborated (throwaway TLD / lure / homoglyph) —
+    // otherwise it is almost certainly the same company's other domain, not an
+    // impersonation. Curated brands (e.g. banks) keep the strict behaviour.
+    const learned = exactCoreBrand.category === 'Your site'
+    if (!learned || tldSuspicious || lure.length > 0 || homoglyphUsed) {
+      impersonated = exactCoreBrand
+      add('Brand name on a non-official domain', `Uses '${exactCoreBrand.core}' but the domain ${registrable} is not the official ${exactCoreBrand.domain}.`, tldSuspicious ? 0.5 : 0.32)
+    }
   } else if (subMatches.length) {
     const longest = subMatches.reduce((a, b) => (b.pattern.length > a.pattern.length ? b : a))
     const b = substrBrands.find((x) => x.core === longest.pattern)
