@@ -132,6 +132,12 @@ export function analyze(input: string, extraBrands: Brand[] = []): Verdict {
   const exactCoreBrand = allBrands.find((b) => b.core === sld)
   const skelCoreBrand = allBrands.find((b) => b.core === sldSkel)
   const subMatches = findPatterns(sldSkel, substrBrands.map((b) => b.core))
+  // A brand core appearing as a whole hyphen/underscore-delimited token — even a
+  // short one like 'sbi' that is too short for safe substring matching. Exact
+  // token only ('sbinary' is NOT a match), and only treated as an attack when
+  // corroborated (see the branch below), so it stays precise.
+  const tokens = sldSkel.split(/[-_]+/).filter(Boolean)
+  const tokenBrand = allBrands.find((b) => b.core.length >= 3 && b.core !== sld && tokens.includes(b.core))
   const tldSuspicious = SUSPICIOUS_TLDS.has(lastLabel)
   const lure = LURE_WORDS.filter(
     (w) => sldSkel.includes(w) || subdomains.some((s) => skeleton(s).includes(w)),
@@ -198,6 +204,11 @@ export function analyze(input: string, extraBrands: Brand[] = []): Verdict {
       impersonated = b
       add('Brand hidden in a longer name', `'${b.core}' (${b.name}) is embedded inside '${sld}'.`, 0.4)
     }
+  } else if (tokenBrand && !officialByDomain && (lure.length > 0 || tldSuspicious)) {
+    // Brand used as a standalone word beside a lure / on a throwaway TLD
+    // (sbi-rewards.online). Exact-token match + corroboration keeps it precise.
+    impersonated = tokenBrand
+    add('Brand name combined with other words', `'${tokenBrand.core}' (${tokenBrand.name}) is used as a word in '${sld}', not the official ${tokenBrand.domain}.`, tldSuspicious ? 0.5 : 0.4)
   } else if (nearest && bestDist > 0) {
     const rr = weightedEditDistance(sldSkel, nearest.core)
     const visual = rr.trace.some((o) => o.kind === 'visual')
