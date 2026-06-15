@@ -23,7 +23,7 @@ learned sites' alternate TLDs no longer false-flagged (`github.community`, `gith
 |------|------|:------:|:------:|:----------:|
 | Merge `phase-c-ml` → `main` | Bring toggle + ML into the live repo | ✅ done | 🟡 | Easy |
 | Report screenshots | Block screen ✅ · inline link flags ✅ · popup Rules/ML (in progress) | 🔄 2 / 4 | 🟢 | Easy |
-| Defense Guide PDF | Regenerate so it says **Horspool** (code already swapped from Aho-Corasick) | ⬜ todo | 🟡 | Easy |
+| Defense Guide PDF | Done — regenerated (Horspool, Damerau, real eval numbers, resolved limits) via `scripts/gen-defense-guide.py`; output in `DAA/PhishGuard_Defense_Guide.pdf` | ✅ done | 🟡 | Easy |
 
 **Why first:** these finish the deliverable you're actually graded on, with near-zero
 risk. Nothing here needs new code — just packaging.
