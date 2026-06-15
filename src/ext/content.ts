@@ -234,7 +234,10 @@ async function run() {
   let target = location.hostname
   if (test) {
     const cand = decodeURIComponent(test[1]).toLowerCase()
-    if (/^[a-z0-9.\-¡-￿]{1,253}$/.test(cand)) target = cand
+    // Accept it only if it has no HTML metacharacters or whitespace (IDN
+    // hostnames still pass). Pure-ASCII pattern, so no high-codepoint byte ever
+    // lands in the bundle. esc() also escapes at render time (defense in depth).
+    if (/^[^\s<>"'&/\\]{1,253}$/.test(cand)) target = cand
   }
   const v = check(target)
 
