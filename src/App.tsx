@@ -44,7 +44,7 @@ export default function App() {
             </div>
             <div>
               <div className="text-base font-bold leading-none">
-                Phish<span className="text-[var(--color-accent-2)]">Guard</span>
+                Un<span className="text-[var(--color-accent-2)]">maskr</span>
               </div>
               <div className="text-[11px] text-muted">
                 Real-time lookalike-domain detection

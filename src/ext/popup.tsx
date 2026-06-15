@@ -70,7 +70,7 @@ function Popup() {
       <div className="hd">
         <div className="mark">🛡️</div>
         <div>
-          <div className="name">Phish<span>Guard</span></div>
+          <div className="name">Un<span>maskr</span></div>
           <div className="sub">Lookalike-domain detector</div>
         </div>
         <button
@@ -156,7 +156,6 @@ function Popup() {
 
       <div className="foot">
         <span>Processed on-device · nothing uploaded</span>
-        <span>Abijith · RVCE</span>
       </div>
     </div>
   )
