@@ -8,6 +8,11 @@ const BADGE: Record<Level, { text: string; color: string }> = {
   dangerous: { text: '✕', color: '#f43f5e' },
 }
 
+// Tabs currently showing a block overlay. While a tab is in here, a routine
+// re-scan (e.g. the demo hook blocks on example.com, whose own domain is safe)
+// must not paint over the red block badge. Cleared when the tab loads afresh.
+const blockedTabs = new Set<number>()
+
 function hostFromUrl(url: string): string | null {
   try {
     const u = new URL(url)
@@ -35,8 +40,12 @@ async function checkTab(tabId: number, url: string | undefined, count: boolean) 
   const v = analyze(host, trusted)
 
   const b = BADGE[v.level]
-  chrome.action.setBadgeText({ tabId, text: b.text }).catch(() => {})
-  chrome.action.setBadgeBackgroundColor({ tabId, color: b.color }).catch(() => {})
+  // Don't downgrade a tab that's actively showing a block screen (the overlay's
+  // red badge is authoritative) unless this scan is itself dangerous.
+  if (!(blockedTabs.has(tabId) && v.level !== 'dangerous')) {
+    chrome.action.setBadgeText({ tabId, text: b.text }).catch(() => {})
+    chrome.action.setBadgeBackgroundColor({ tabId, color: b.color }).catch(() => {})
+  }
 
   if (count) {
     // Count every page scanned. "Threats blocked" is counted separately, when
@@ -50,9 +59,13 @@ async function checkTab(tabId: number, url: string | undefined, count: boolean) 
 }
 
 chrome.tabs.onUpdated.addListener((tabId, info, tab) => {
+  // A fresh load starting clears any prior block state for this tab.
+  if (info.status === 'loading') blockedTabs.delete(tabId)
   if (info.status === 'complete') checkTab(tabId, tab.url, true)
   else if (info.url) checkTab(tabId, info.url, false)
 })
+
+chrome.tabs.onRemoved.addListener((tabId) => blockedTabs.delete(tabId))
 
 chrome.tabs.onActivated.addListener(async ({ tabId }) => {
   try {
@@ -81,6 +94,7 @@ chrome.runtime.onMessage.addListener((msg, sender) => {
   // signal matches the overlay, including the demo test hook).
   const tabId = sender.tab?.id
   if (tabId != null) {
+    blockedTabs.add(tabId)
     chrome.action.setBadgeText({ tabId, text: BADGE.dangerous.text }).catch(() => {})
     chrome.action.setBadgeBackgroundColor({ tabId, color: BADGE.dangerous.color }).catch(() => {})
   }
