@@ -20,6 +20,9 @@ data-eval/dnstwist/
 data-eval/tranco-top.txt
 data-eval/openphish-hosts.txt
 
+# College-submission artifact generator (output lives outside the repo)
+scripts/gen-defense-guide.py
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
