@@ -43,9 +43,10 @@ looks at, what it stores, and what it does **not** do.
 
 ## Permissions, explained
 
-- **Access to the sites you visit** (`host_permissions`) and **`tabs`** — required so
-  PhishGuard can read each page's address to check it for look-alikes in real time.
-  This access is used *only* for on-device detection; no page data is transmitted.
+- **Access to the sites you visit** (`host_permissions`) — required so PhishGuard can
+  read each page's address (and the addresses of links on it) to check for look-alikes
+  in real time. This access is used *only* for on-device detection; no page data is
+  transmitted. PhishGuard does **not** request the `tabs` permission.
 - **`storage`** — to keep your local visit counts, stats, and settings on your device.
 
 ## Your control

@@ -94,10 +94,11 @@ Findings from the self-audit (treating the extension as the attack target):
 | **DOM-injection / XSS** via `#phishguard-test=` hook + unescaped shadow-DOM `innerHTML` | ✅ fixed — all dynamic values HTML-escaped; hook value validated as a hostname |
 | **Message-handler abuse** (`pg-block`) | ✅ hardened — payload type-checked, length-capped, score clamped |
 | **No network / no exfiltration** (`fetch`/XHR/beacon/WebSocket) | ✅ verified — none in `src/`; 100 % on-device |
-| Strip the `#phishguard-test` demo hook for the published build | ⬜ todo (now validated/safe, but ideally absent in production) |
+| Strip the `#phishguard-test` demo hook for the published build | ✅ done — gated behind `__PG_DEMO__`; `npm run build:ext:store` dead-code-eliminates it (dev build keeps it for the demo) |
 | Privacy policy — discloses local visit-count learning, no upload | ✅ done (`PRIVACY.md`) |
-| Permission justification — `tabs` + `<all_urls>` (needed to scan every page) | ⬜ todo (document; consider dropping `tabs`) |
-| Store assets — icon, screenshots (have them), description | ⬜ todo (mostly done) |
+| Permission justification — `<all_urls>` (needed to scan every page) | ✅ done — documented in `STORE_LISTING.md`; **dropped `tabs`** (tab URLs are already covered by host permissions) |
+| Store assets — icon, screenshots (have them), description | 🔄 description + permission copy done (`STORE_LISTING.md`); screenshots still need cropping to 1280×800 |
+| Open-source license (MIT) | ✅ done — `LICENSE` + `package.json` |
 | **Overlay-removal resilience** — re-inject guard re-adds the block screen if a hostile page deletes it; badge is background-drawn (page-proof) | ✅ mitigated (re-inject guard added) |
 | Badge now turns red on every block shown (incl. demo) — pair with "pin me" | ✅ done |
 

@@ -2,6 +2,11 @@
 import { analyze, type Verdict } from '../algorithms/scoring'
 import type { Brand } from '../data/brands'
 
+// Build-time flag, replaced by esbuild `define`. `true` in dev/demo builds,
+// `false` in the published store build (`build:ext:store`) so the demo hook below
+// is dead-code-eliminated out of the shipped bundle.
+declare const __PG_DEMO__: boolean
+
 // Three layers of protection on every page:
 //  1. If the page itself is a dangerous lookalike  -> full-screen block screen.
 //  2. If it is suspicious                          -> a top warning bar.
@@ -227,22 +232,28 @@ async function run() {
   if (!(await isEnabled())) return // master switch: paused
   TRUSTED = await loadTrusted()
 
-  // Demo hook (#phishguard-test=<host>). The value is attacker-controllable, so
-  // accept it ONLY if it is a plausible hostname — never HTML, spaces or scripts.
-  // (Recommend stripping this hook entirely for the published store build.)
-  const test = location.hash.match(/phishguard-test=([^&\s]+)/)
+  // Demo hook (#phishguard-test=<host>) — compiled in for dev/demo builds only.
+  // The store build (`build:ext:store`) sets __PG_DEMO__ = false, so esbuild
+  // dead-code-eliminates this entire block: the hook and its regex never reach
+  // the published bundle. Even in demo builds the value is attacker-controllable,
+  // so we accept it ONLY if it is a plausible hostname — never HTML, spaces or
+  // scripts (esc() also escapes at render time — defense in depth).
   let target = location.hostname
-  if (test) {
-    const cand = decodeURIComponent(test[1]).toLowerCase()
-    // Accept it only if it has no HTML metacharacters or whitespace (IDN
-    // hostnames still pass). Pure-ASCII pattern, so no high-codepoint byte ever
-    // lands in the bundle. esc() also escapes at render time (defense in depth).
-    if (/^[^\s<>"'&/\\]{1,253}$/.test(cand)) target = cand
+  let demoForced = false
+  if (__PG_DEMO__) {
+    const test = location.hash.match(/phishguard-test=([^&\s]+)/)
+    if (test) {
+      const cand = decodeURIComponent(test[1]).toLowerCase()
+      if (/^[^\s<>"'&/\\]{1,253}$/.test(cand)) {
+        target = cand
+        demoForced = true
+      }
+    }
   }
   const v = check(target)
 
   if (v.level === 'dangerous') blockScreen(v)
-  else if (v.level === 'suspicious' || (test && v.level !== 'safe')) topBar(v)
+  else if (v.level === 'suspicious' || (demoForced && v.level !== 'safe')) topBar(v)
 
   // Scan links now and again as the page grows (debounced). Attach the
   // observer only once, even if run() is re-invoked after re-enabling.

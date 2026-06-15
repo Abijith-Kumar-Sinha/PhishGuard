@@ -112,8 +112,9 @@ phishguard/
 **Build commands**
 ```bash
 npm install
-npm run build:ext   # -> extension-dist/  (load unpacked in chrome://extensions)
-npm run dev         # web demo (dev sandbox)
+npm run build:ext        # dev build -> extension-dist/ (keeps the #phishguard-test demo hook)
+npm run build:ext:store  # publishable build -> extension-dist/ (demo hook stripped)
+npm run dev              # web demo (dev sandbox)
 ```
 
 ---
@@ -136,6 +137,14 @@ npm run dev         # web demo (dev sandbox)
 - **Registrar-side screening** — flag abusive registrations at creation time.
 - **Chrome Web Store publication** of the extension.
 - **Conference paper (IEEE format)** on the homoglyph-aware weighted edit-distance method and its evaluation.
+
+---
+
+## License
+
+[MIT](LICENSE) © Abijith Kumar Sinha. PhishGuard runs entirely on-device and makes no
+network calls — see [`PRIVACY.md`](PRIVACY.md). Chrome Web Store listing copy and
+permission justifications live in [`STORE_LISTING.md`](STORE_LISTING.md).
 
 ---
 
