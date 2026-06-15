@@ -85,6 +85,23 @@ ceiling outcomes — but both depend on Phase 1's real-data evaluation existing 
 
 ---
 
+## Security & Chrome Web Store readiness
+
+Findings from the self-audit (treating the extension as the attack target):
+
+| Item | Status |
+|------|--------|
+| **DOM-injection / XSS** via `#phishguard-test=` hook + unescaped shadow-DOM `innerHTML` | ✅ fixed — all dynamic values HTML-escaped; hook value validated as a hostname |
+| **Message-handler abuse** (`pg-block`) | ✅ hardened — payload type-checked, length-capped, score clamped |
+| **No network / no exfiltration** (`fetch`/XHR/beacon/WebSocket) | ✅ verified — none in `src/`; 100 % on-device |
+| Strip the `#phishguard-test` demo hook for the published build | ⬜ todo (now validated/safe, but ideally absent in production) |
+| Privacy policy — discloses local visit-count learning, no upload | ⬜ todo (required by the store) |
+| Permission justification — `tabs` + `<all_urls>` (needed to scan every page) | ⬜ todo (document; consider dropping `tabs`) |
+| Store assets — icon, screenshots (have them), description | ⬜ todo (mostly done) |
+| **Inherent limitation:** a hostile page's JS can remove the injected overlay (MV3 content scripts share the page DOM) — best-effort, not preventable | ⚠️ document |
+
+---
+
 ## Recommended critical path
 
 The smallest sequence that maximises grade **and** keeps the paper door open:

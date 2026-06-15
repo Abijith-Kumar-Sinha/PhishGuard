@@ -24,7 +24,23 @@ defeat plain edit distance. PhishGuard targets exactly that intersection.
 
 ---
 
-## 2. Gap 1 — Homoglyph / IDN homograph detection is under-solved
+## 2. At a glance — paper → gap → how PhishGuard tackles it
+
+| Paper (year · venue) | What it's about | Research gap it states | How PhishGuard tackles it |
+|----------------------|-----------------|------------------------|---------------------------|
+| **Munir et al. 2025** · IEEE Access | A web-protection model for detecting IDN homograph exploits | IDN homographs are "visually indistinguishable from legitimate sites"; detection still leans on confusable DBs + reference lists and needs improving | UTS #39 **skeleton normalisation** + **weighted Damerau–Levenshtein**, on-device & explainable; ships the full 1,624-entry confusables table |
+| **Wang et al. 2023** · Computers & Security (*PhishHunter*) | Siamese neural network for camouflaged IDN phishing | "**Few studies in visual homograph detection**"; learning methods struggle with **data imbalance** and **generalization** | **Training-free** classic algorithms (no data imbalance); proven to generalize — **96.8 % leave-one-brand-out** recall on unseen brands |
+| **Homoglyph Detection w/ ML + Hash 2022** · J. Sensor & Actuator Networks (MDPI) | ML + hash function for homoglyph attacks | Mapping-table methods "**cannot detect homographs whose characters are not in the mapping**, and the mapping must be updated manually" | Loads the **full Unicode UTS #39** table (1,624 folds) + **mixed-script detection**, not a hand-curated subset |
+| **Tian et al. 2025** · arXiv (survey → *Computer Science Review*) | Survey of malicious-URL detection (blacklists → deep learning) | Blacklists lag; ML detectors are **opaque and data-hungry** | Real-time, **string-only, explainable** verdict — every point traces to a named signal; no blacklist, no ML core |
+| **"Leveraging ML to proactively identify phishing campaigns" 2025** · J. Big Data (Springer) | Catching phishing campaigns *before* they strike | Blacklists **react too late** — blind to brand-new zero-day domains | Flags look-alikes at **navigation / first sight** from the domain string alone — no list to wait on |
+| **WEIS 2025** / arXiv 2502.09549 | Newly-registered phishing domains at scale | **<20 %** of phish are on blacklists at hour-zero; many campaigns last **<2 h** | **On-device, instant** verdict — covers exactly the zero-day window blacklists miss |
+
+The detailed sources and quotes follow in §3–§4; the honest scope (what PhishGuard does
+*not* solve) is in §5.
+
+---
+
+## 3. Gap 1 — Homoglyph / IDN homograph detection is under-solved
 
 - **S. Munir, A. Khan, F. Athar, A. Al-Rasheed (2025).** *A Web Protection Model
   Against Internationalized Domain Name Homograph Exploits.* **IEEE Access.**
@@ -52,7 +68,7 @@ defeat plain edit distance. PhishGuard targets exactly that intersection.
 
 ---
 
-## 3. Gap 2 — Zero-day / newly-registered domains defeat blacklists
+## 4. Gap 2 — Zero-day / newly-registered domains defeat blacklists
 
 - **Y. Tian, Y. Yu, J. Sun, Y. Wang (2025).** *From Past to Present: A Survey of
   Malicious URL Detection Techniques, Datasets and Code Repositories.*
@@ -79,7 +95,7 @@ defeat plain edit distance. PhishGuard targets exactly that intersection.
 
 ---
 
-## 4. What PhishGuard tackles — and what it does not
+## 5. What PhishGuard tackles — and what it does not
 
 | Documented gap | PhishGuard's response | Honest limitation |
 |----------------|-----------------------|-------------------|
@@ -89,7 +105,7 @@ defeat plain edit distance. PhishGuard targets exactly that intersection.
 
 ---
 
-## 5. The contribution (DAA framing)
+## 6. The contribution (DAA framing)
 
 The recent literature attacks homoglyph phishing mainly with **heavy ML** — Siamese
 neural networks (PhishHunter), GAN-based augmentation, image-similarity models. These
