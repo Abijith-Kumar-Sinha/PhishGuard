@@ -1,7 +1,7 @@
 // Reproducible lookalike generator for the controlled positive set.
 //
 // Produces labelled phishing variants of the protected brands across the six
-// attack families PhishGuard claims to catch. Generation is deterministic
+// attack families Unmaskr claims to catch. Generation is deterministic
 // (seeded PRNG) so the evaluation reproduces exactly on every run.
 //
 // IMPORTANT (fairness): the homoglyph table below is an INDEPENDENT, richer

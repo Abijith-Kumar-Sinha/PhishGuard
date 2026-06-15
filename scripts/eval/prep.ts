@@ -48,7 +48,7 @@ const openphish = [...hosts]
 writeFileSync(resolve(OUT, 'openphish-hosts.txt'), openphish.join('\n'))
 
 // ── Probe: how many OpenPhish hosts lexically resemble a protected brand? ──
-// Independent of PhishGuard's scoring: a host is "brand-resembling" if its
+// Independent of Unmaskr's scoring: a host is "brand-resembling" if its
 // skeleton SLD embeds a brand core (>=4 chars), or is within raw Levenshtein 2
 // of one, or carries any non-ASCII char. This bounds the in-scope subset.
 const cores = BRANDS.filter((b) => b.core.length >= 4).map((b) => b.core)

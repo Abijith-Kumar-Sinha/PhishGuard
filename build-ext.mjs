@@ -1,10 +1,10 @@
-// Bundles the PhishGuard MV3 extension into extension-dist/ with esbuild.
+// Bundles the Unmaskr MV3 extension into extension-dist/ with esbuild.
 import * as esbuild from 'esbuild'
 import { cpSync, mkdirSync, rmSync } from 'node:fs'
 
-// `--store` produces the publishable Chrome Web Store build: the #phishguard-test
+// `--store` produces the publishable Chrome Web Store build: the #unmaskr-test
 // demo hook is dead-code-eliminated (__PG_DEMO__ = false). The default build keeps
-// the hook so the local demo (demo.html#phishguard-test=...) still works.
+// the hook so the local demo (demo.html#unmaskr-test=...) still works.
 const STORE = process.argv.includes('--store')
 
 const OUT = 'extension-dist'

@@ -89,7 +89,7 @@ export default function Evaluation() {
     const pg = evalMethod((c) => analyze(c.d).level !== 'safe')
     const b1 = evalMethod((c) => baselinePhish(c.d, 1))
     const b3 = evalMethod((c) => baselinePhish(c.d, 3))
-    // recall per kind for PhishGuard vs baseline(t=1)
+    // recall per kind for Unmaskr vs baseline(t=1)
     const kinds: Kind[] = ['homoglyph', 'typo', 'embed']
     const byKind = kinds.map((k) => {
       const sub = SET.filter((c) => c.kind === k)
@@ -110,7 +110,7 @@ export default function Evaluation() {
     <div className="mx-auto max-w-5xl px-5 pb-24 pt-10">
       <h2 className="text-2xl font-bold">Evaluation &amp; Results</h2>
       <p className="mt-1 text-sm text-muted">
-        PhishGuard vs a plain edit-distance baseline on a {SET.length}-domain
+        Unmaskr vs a plain edit-distance baseline on a {SET.length}-domain
         labelled set, plus an empirical check of the O(n·m) complexity.
       </p>
 
@@ -129,7 +129,7 @@ export default function Evaluation() {
             <tr><th className="p-2.5">Method</th><th className="p-2.5">Recall (phish caught)</th><th className="p-2.5">False-alarm rate</th><th className="p-2.5">Accuracy</th></tr>
           </thead>
           <tbody className="font-mono">
-            <Row name="PhishGuard (skeleton + weighted DP + Horspool)" m={data.pg} highlight />
+            <Row name="Unmaskr (skeleton + weighted DP + Horspool)" m={data.pg} highlight />
             <Row name="Plain edit distance (threshold = 1)" m={data.b1} />
             <Row name="Plain edit distance (threshold = 3)" m={data.b3} />
           </tbody>
@@ -139,7 +139,7 @@ export default function Evaluation() {
         Plain edit distance faces a trade-off: a tight threshold (1) misses
         multi-character disguises; a loose one (3) raises false alarms.
         Skeleton normalization collapses every homoglyph to distance ~0, so
-        PhishGuard gets high recall <i>and</i> low false alarms.
+        Unmaskr gets high recall <i>and</i> low false alarms.
       </p>
 
       {/* Recall by attack type */}
@@ -149,7 +149,7 @@ export default function Evaluation() {
           <div key={r.k} className="mb-4 last:mb-0">
             <div className="mb-1 flex justify-between text-xs">
               <span className="capitalize text-ink">{r.k} attacks</span>
-              <span className="text-muted">PhishGuard {pct(r.pg)} · baseline {pct(r.base)}</span>
+              <span className="text-muted">Unmaskr {pct(r.pg)} · baseline {pct(r.base)}</span>
             </div>
             <Bar value={r.pg} color="var(--color-safe)" />
             <div className="h-1" />
@@ -157,7 +157,7 @@ export default function Evaluation() {
           </div>
         ))}
         <div className="mt-2 flex gap-4 text-[11px] text-muted">
-          <Legend c="var(--color-safe)" l="PhishGuard" />
+          <Legend c="var(--color-safe)" l="Unmaskr" />
           <Legend c="var(--color-danger)" l="Plain edit distance (t=1)" />
         </div>
       </div>
@@ -191,7 +191,7 @@ function Headline({ title, pg, base, fmt, lowerBetter, baseLabel }: { title: str
       <div className="text-xs uppercase tracking-wider text-muted">{title}</div>
       <div className="mt-1 flex items-end gap-2">
         <span className="text-3xl font-bold" style={{ color: good ? 'var(--color-safe)' : 'var(--color-ink)' }}>{fmt(pg)}</span>
-        <span className="pb-1 text-xs text-muted">PhishGuard</span>
+        <span className="pb-1 text-xs text-muted">Unmaskr</span>
       </div>
       <div className="mt-0.5 text-xs text-muted">vs {fmt(base)} — {baseLabel ?? 'plain edit distance'}</div>
     </div>

@@ -1,4 +1,4 @@
-# PhishGuard — Chrome Web Store listing
+# Unmaskr — Chrome Web Store listing
 
 Copy-and-paste source for the Chrome Web Store submission, plus the reviewer-facing
 justifications. Keep this in sync with `manifest.json` and `PRIVACY.md`.
@@ -8,7 +8,7 @@ justifications. Keep this in sync with `manifest.json` and `PRIVACY.md`.
 ## Product name
 
 ```
-PhishGuard - Lookalike Domain Detector
+Unmaskr - Lookalike Domain Detector
 ```
 
 ## Summary (short description — 132 char max)
@@ -27,7 +27,7 @@ Real-time warning when a site mimics a trusted brand — including invisible Uni
 
 ## Detailed description
 
-> PhishGuard warns you the moment you land on a web address that is *pretending* to be
+> Unmaskr warns you the moment you land on a web address that is *pretending* to be
 > a brand you trust — `paypa1.com`, `icic1bank.com`, or `paypal.com` written with a
 > Cyrillic "а" that looks identical but isn't.
 >
@@ -35,7 +35,7 @@ Real-time warning when a site mimics a trusted brand — including invisible Uni
 > already-reported bad sites, or compare domains character-by-character — which is
 > blind to homoglyphs (different Unicode characters that *look* the same). Fresh
 > look-alike domains are registered faster than blocklists can catch them, and they
-> are the ones used in the most damaging targeted attacks. PhishGuard tackles exactly
+> are the ones used in the most damaging targeted attacks. Unmaskr tackles exactly
 > this slice: it reads the domain string and judges, in real time, how close it is to
 > a brand you trust.
 >
@@ -52,23 +52,23 @@ Real-time warning when a site mimics a trusted brand — including invisible Uni
 > dangerous links *before* you click them. A popup dashboard shows the current
 > verdict, a manual "check any domain" box, and your local protection stats.
 >
-> **Private by design.** Everything runs on your device. PhishGuard makes **no
+> **Private by design.** Everything runs on your device. Unmaskr makes **no
 > network requests** — no servers, no accounts, no tracking, no analytics. It reads
 > only the *address* of pages and links, never their content, your passwords, or your
 > files. Your browsing never leaves your browser. (It's open-source — read the code.)
 >
 > **Not a replacement for Chrome's Safe Browsing — a complement to it.** Safe Browsing
-> is great at known-bad URLs; PhishGuard focuses on the look-alike domains that slip
+> is great at known-bad URLs; Unmaskr focuses on the look-alike domains that slip
 > past blocklists because they're brand new. Run both.
 >
-> Open-source (MIT): https://github.com/Abijith-Kumar-Sinha/PhishGuard
+> Open-source (MIT): https://github.com/Abijith-Kumar-Sinha/Unmaskr
 
 ---
 
 ## Single-purpose description (reviewer field)
 
 ```
-PhishGuard has a single purpose: to detect and warn the user when the domain of the
+Unmaskr has a single purpose: to detect and warn the user when the domain of the
 page they are viewing (or a link on that page) is a look-alike imitation of a trusted
 brand, including Unicode homoglyph disguises. All detection is local string analysis;
 the extension performs no other function.
@@ -109,7 +109,7 @@ narrow host list. Access is used solely for local detection; nothing is sent any
 - **Remote code:** None. All code ships in the package; no `eval`, no remotely hosted
   scripts.
 - **Privacy policy URL:** link to the hosted `PRIVACY.md`
-  (e.g. `https://github.com/Abijith-Kumar-Sinha/PhishGuard/blob/main/PRIVACY.md`).
+  (e.g. `https://github.com/Abijith-Kumar-Sinha/Unmaskr/blob/main/PRIVACY.md`).
 - Tick the certifications: *does not sell/transfer data to third parties*, *not used for
   purposes unrelated to the single purpose*, *not used for creditworthiness/lending*.
 
@@ -136,5 +136,5 @@ npm run build:ext:store
 
 Then zip the `extension-dist/` folder for upload. Verify before zipping:
 - `manifest.json` permissions are `["storage"]` + host permissions only.
-- `content.js` contains no `phishguard-test` string (the demo hook is dead-code-
+- `content.js` contains no `unmaskr-test` string (the demo hook is dead-code-
   eliminated in the store build — grep it to confirm).

@@ -1,7 +1,7 @@
-# PhishGuard — Research Gap & Positioning
+# Unmaskr — Research Gap & Positioning
 
-This note grounds PhishGuard in the recent literature: it states the documented
-research gap, lists verifiable 2022–2025 sources, and maps precisely what PhishGuard
+This note grounds Unmaskr in the recent literature: it states the documented
+research gap, lists verifiable 2022–2025 sources, and maps precisely what Unmaskr
 tackles within that gap — including, honestly, what it does **not** solve.
 
 > Citation note: for paywalled venues (IEEE, Elsevier, Springer) the gap statements
@@ -20,13 +20,13 @@ dependent on manually-maintained character-mapping tables that miss any characte
 already in the map. **No lightweight, explainable, training-free method occupies the
 intersection of all three** — fast enough to run on-device at navigation time,
 transparent enough to justify each verdict, and robust to Unicode homoglyphs that
-defeat plain edit distance. PhishGuard targets exactly that intersection.
+defeat plain edit distance. Unmaskr targets exactly that intersection.
 
 ---
 
-## 2. At a glance — paper → gap → how PhishGuard tackles it
+## 2. At a glance — paper → gap → how Unmaskr tackles it
 
-| Paper (year · venue) | What it's about | Research gap it states | How PhishGuard tackles it |
+| Paper (year · venue) | What it's about | Research gap it states | How Unmaskr tackles it |
 |----------------------|-----------------|------------------------|---------------------------|
 | **Munir et al. 2025** · IEEE Access | A web-protection model for detecting IDN homograph exploits | IDN homographs are "visually indistinguishable from legitimate sites"; detection still leans on confusable DBs + reference lists and needs improving | UTS #39 **skeleton normalisation** + **weighted Damerau–Levenshtein**, on-device & explainable; ships the full 1,624-entry confusables table |
 | **Wang et al. 2023** · Computers & Security (*PhishHunter*) | Siamese neural network for camouflaged IDN phishing | "**Few studies in visual homograph detection**"; learning methods struggle with **data imbalance** and **generalization** | **Training-free** classic algorithms (no data imbalance); proven to generalize — **96.8 % leave-one-brand-out** recall on unseen brands |
@@ -35,7 +35,7 @@ defeat plain edit distance. PhishGuard targets exactly that intersection.
 | **"Leveraging ML to proactively identify phishing campaigns" 2025** · J. Big Data (Springer) | Catching phishing campaigns *before* they strike | Blacklists **react too late** — blind to brand-new zero-day domains | Flags look-alikes at **navigation / first sight** from the domain string alone — no list to wait on |
 | **WEIS 2025** / arXiv 2502.09549 | Newly-registered phishing domains at scale | **<20 %** of phish are on blacklists at hour-zero; many campaigns last **<2 h** | **On-device, instant** verdict — covers exactly the zero-day window blacklists miss |
 
-The detailed sources and quotes follow in §3–§4; the honest scope (what PhishGuard does
+The detailed sources and quotes follow in §3–§4; the honest scope (what Unmaskr does
 *not* solve) is in §5.
 
 ---
@@ -48,7 +48,7 @@ The detailed sources and quotes follow in §3–§4; the honest scope (what Phis
   — A full 2025 IEEE paper devoted to detecting IDN homograph exploits, which it
   describes as producing URLs "visually indistinguishable from legitimate sites."
   Its own approach extracts `xn--` IDNs and compares against a reference list using a
-  confusable database (Unisimchar) — i.e. the *same algorithmic family* as PhishGuard,
+  confusable database (Unisimchar) — i.e. the *same algorithmic family* as Unmaskr,
   confirming this is a live, current research direction (not a solved problem).
 
 - **M. Wang, X. Zang, J. Cao, S. Li (2023).** *PhishHunter: Detecting camouflaged
@@ -95,9 +95,9 @@ The detailed sources and quotes follow in §3–§4; the honest scope (what Phis
 
 ---
 
-## 5. What PhishGuard tackles — and what it does not
+## 5. What Unmaskr tackles — and what it does not
 
-| Documented gap | PhishGuard's response | Honest limitation |
+| Documented gap | Unmaskr's response | Honest limitation |
 |----------------|-----------------------|-------------------|
 | Blacklist zero-day latency (hours–days) | On-device, **zero-network**, string-time verdict at the moment of navigation — independent of any list | Purely **lexical**: cannot catch compromised legitimate sites or free-hosting phishing (≈ 98 % of live OpenPhish volume — see `EVALUATION.md §6`) |
 | ML opacity & data-hunger | **Training-free, fully explainable** — every risk point traces to a named signal; classic DP + string matching, nothing to train | Risk weights are currently **hand-tuned** (calibration against labelled data is the planned fix) |
@@ -112,7 +112,7 @@ neural networks (PhishHunter), GAN-based augmentation, image-similarity models. 
 are accurate but opaque, data-hungry, and not designed for sub-millisecond on-device
 use.
 
-PhishGuard's contribution is to show that a **fused classical-algorithms pipeline** —
+Unmaskr's contribution is to show that a **fused classical-algorithms pipeline** —
 skeleton-normalized **weighted Damerau–Levenshtein** (Dynamic Programming, DAA Unit IV)
 combined with **Horspool** substring matching (string matching, DAA Unit III) and
 **UTS #39 transform-and-conquer normalization** — reaches competitive detection

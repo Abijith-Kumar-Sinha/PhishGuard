@@ -1,4 +1,4 @@
-// PhishGuard real-data evaluation harness.
+// Unmaskr real-data evaluation harness.
 //
 // Datasets:
 //   • Tranco top-N legitimate domains      (negatives)        data-eval/tranco-top.txt
@@ -31,13 +31,13 @@ const openphish = need('openphish-hosts.txt')
 const looks = generateLookalikes()
 
 // ── Predictors ─────────────────────────────────────────────────────────────
-// PhishGuard: a verdict above 'safe' is a flag. Two operating points.
+// Unmaskr: a verdict above 'safe' is a flag. Two operating points.
 const pgAny = (d: string) => analyze(d).level !== 'safe'
 const pgDanger = (d: string) => analyze(d).level === 'dangerous'
 
 // Naive baseline: raw (homoglyph-blind) Levenshtein from the SLD to any brand
 // core, flag if min distance <= t. No skeleton, no punycode — the standard
-// edit-distance defence PhishGuard is argued to improve on.
+// edit-distance defence Unmaskr is argued to improve on.
 const cores = BRANDS.filter((b) => b.core.length >= 4).map((b) => b.core)
 const realDomains = new Set(BRANDS.map((b) => b.domain))
 function lev(a: string, b: string): number {
@@ -144,7 +144,7 @@ const latency = {
 // ── Report ───────────────────────────────────────────────────────────────
 const line = '─'.repeat(72)
 console.log('\n' + line)
-console.log('PhishGuard — Real-Data Evaluation')
+console.log('Unmaskr — Real-Data Evaluation')
 console.log(line)
 console.log(`Negatives (Tranco legit)     : ${N}`)
 console.log(`Controlled positives (gen.)  : ${P}`)
@@ -161,14 +161,14 @@ const row = (name: string, cm: CM) => {
     `  (${cm.tp}/${cm.fp}/${cm.fn})`,
   )
 }
-row('PhishGuard (any)', cmPgAny)
-row('PhishGuard (danger)', cmPgDanger)
+row('Unmaskr (any)', cmPgAny)
+row('Unmaskr (danger)', cmPgDanger)
 row('Levenshtein t=1', cmB1)
 row('Levenshtein t=2', cmB2)
 row('Levenshtein t=3', cmB3)
 
 console.log('\n── Recall by attack family (controlled positives) ──')
-console.log('family          n     PhishGuard   Lev t=1   Lev t=2   Lev t=3')
+console.log('family          n     Unmaskr   Lev t=1   Lev t=2   Lev t=3')
 for (const f of families) {
   const c = fam[f]
   const r = (x: number) => pct(x / c.total).padStart(7)
@@ -181,12 +181,12 @@ for (const f of families) {
 }
 
 console.log('\n── False positives on Tranco legit domains ──')
-console.log(`PhishGuard (any)    : ${pgAnyFP}/${N}  = ${pct(pgAnyFP / N)} FPR`)
-console.log(`PhishGuard (danger) : ${pgDangerFP}/${N}  = ${pct(pgDangerFP / N)} FPR`)
+console.log(`Unmaskr (any)    : ${pgAnyFP}/${N}  = ${pct(pgAnyFP / N)} FPR`)
+console.log(`Unmaskr (danger) : ${pgDangerFP}/${N}  = ${pct(pgDangerFP / N)} FPR`)
 console.log(`Levenshtein t=1     : ${b1FP}/${N}  = ${pct(b1FP / N)} FPR`)
 console.log(`Levenshtein t=2     : ${b2FP}/${N}  = ${pct(b2FP / N)} FPR`)
 console.log(`Levenshtein t=3     : ${b3FP}/${N}  = ${pct(b3FP / N)} FPR`)
-console.log('  PhishGuard FP examples:', fpExamples.slice(0, 15).join(', ') || '(none)')
+console.log('  Unmaskr FP examples:', fpExamples.slice(0, 15).join(', ') || '(none)')
 
 console.log('\n── In-the-wild (OpenPhish) ──')
 console.log(`Full feed recall          : ${opFullFlag}/${openphish.length} = ${pct(opFullFlag / openphish.length)}`)

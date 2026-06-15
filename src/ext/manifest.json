@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "PhishGuard - Lookalike Domain Detector",
+  "name": "Unmaskr - Lookalike Domain Detector",
   "version": "0.2.0",
   "description": "Warns you in real time when a website is a lookalike of a trusted brand - including invisible Unicode homoglyph disguises.",
   "permissions": ["storage"],
@@ -10,7 +10,7 @@
   },
   "action": {
     "default_popup": "popup.html",
-    "default_title": "PhishGuard",
+    "default_title": "Unmaskr",
     "default_icon": {
       "16": "icons/icon16.png",
       "48": "icons/icon48.png",

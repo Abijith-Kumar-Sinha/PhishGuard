@@ -74,7 +74,7 @@ export default function App() {
             Is this domain a fake?
           </h1>
           <p className="mx-auto mt-3 max-w-xl text-muted">
-            Paste a website address. PhishGuard checks it against trusted brands
+            Paste a website address. Unmaskr checks it against trusted brands
             using string algorithms — and catches invisible{' '}
             <span className="text-ink">homoglyph</span> disguises that normal
             checks miss.

@@ -1,4 +1,4 @@
-# PhishGuard — Real-Time Detection of Lookalike Phishing Domains
+# Unmaskr — Real-Time Detection of Lookalike Phishing Domains
 
 A Manifest V3 Chrome extension that detects **lookalike phishing domains** — including invisible **Unicode homoglyph** disguises — in real time, using classic string algorithms (no machine learning). Built for the Design & Analysis of Algorithms course.
 
@@ -6,7 +6,7 @@ A Manifest V3 Chrome extension that detects **lookalike phishing domains** — i
 
 ## 1. Project Overview
 
-Attackers register domains that imitate trusted brands (`icic1bank.com`, or `paypal.com` written with a Cyrillic `а`) to steal credentials, OTPs, and payments. The standard defence — edit distance — compares raw character codes and is **blind to homoglyphs**. PhishGuard closes that gap:
+Attackers register domains that imitate trusted brands (`icic1bank.com`, or `paypal.com` written with a Cyrillic `а`) to steal credentials, OTPs, and payments. The standard defence — edit distance — compares raw character codes and is **blind to homoglyphs**. Unmaskr closes that gap:
 
 1. **Normalises** a domain to a homoglyph-free "skeleton" (Unicode UTS #39).
 2. Measures similarity to a protected brand list with a **weighted edit-distance dynamic program**.
@@ -62,7 +62,7 @@ The engine is a 4-stage pipeline, implemented as pure framework-free TypeScript,
 ## 4. File Structure
 
 ```
-phishguard/
+unmaskr/
 ├── src/
 │   ├── algorithms/
 │   │   ├── confusables.ts     # skeleton normalization + substitution costs
@@ -112,7 +112,7 @@ phishguard/
 **Build commands**
 ```bash
 npm install
-npm run build:ext        # dev build -> extension-dist/ (keeps the #phishguard-test demo hook)
+npm run build:ext        # dev build -> extension-dist/ (keeps the #unmaskr-test demo hook)
 npm run build:ext:store  # publishable build -> extension-dist/ (demo hook stripped)
 npm run dev              # web demo (dev sandbox)
 ```
@@ -126,7 +126,7 @@ npm run dev              # web demo (dev sandbox)
 - **Block page is dismissible** — "Continue anyway" lets a determined user proceed (by design).
 - **Stats may slightly over-count** on pages that fire multiple navigation events.
 - **Local-file scanning** requires enabling "Allow access to file URLs" for the extension.
-- **Chrome's own IDN guard** can intercept navigation to famous homoglyph domains before the content script runs (mitigated via Punycode decoding + the popup checker + a `#phishguard-test=` demo hook).
+- **Chrome's own IDN guard** can intercept navigation to famous homoglyph domains before the content script runs (mitigated via Punycode decoding + the popup checker + a `#unmaskr-test=` demo hook).
 
 ---
 
@@ -142,7 +142,7 @@ npm run dev              # web demo (dev sandbox)
 
 ## License
 
-[MIT](LICENSE) © Abijith Kumar Sinha. PhishGuard runs entirely on-device and makes no
+[MIT](LICENSE) © Abijith Kumar Sinha. Unmaskr runs entirely on-device and makes no
 network calls — see [`PRIVACY.md`](PRIVACY.md). Chrome Web Store listing copy and
 permission justifications live in [`STORE_LISTING.md`](STORE_LISTING.md).
 

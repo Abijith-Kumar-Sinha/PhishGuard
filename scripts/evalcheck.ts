@@ -15,6 +15,6 @@ const pg=metrics(d=>analyze(d).level!=='safe')
 const b1=metrics(d=>base(d,1))
 const b3=metrics(d=>base(d,3))
 const f=(m:any)=>`recall ${Math.round(m.recall*100)}%  FPR ${Math.round(m.fpr*100)}%  acc ${Math.round(m.acc*100)}%`
-console.log('PhishGuard       ', f(pg))
+console.log('Unmaskr       ', f(pg))
 console.log('Baseline (t=1)   ', f(b1))
 console.log('Baseline (t=3)   ', f(b3))

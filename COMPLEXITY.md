@@ -1,4 +1,4 @@
-# PhishGuard — Algorithm & Complexity Analysis
+# Unmaskr — Algorithm & Complexity Analysis
 
 Time and space complexity of every stage in the detection pipeline, with the
 DAA-course technique each one illustrates. Notation:

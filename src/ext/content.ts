@@ -60,7 +60,7 @@ function glyphHtml(host: string): string {
 
 // ── 1. Full-screen block screen ──────────────────────────────────────────
 function blockScreen(v: Verdict) {
-  if (document.getElementById('phishguard-host')) return
+  if (document.getElementById('unmaskr-host')) return
   // Tell the background a block was actually shown, so "Threats blocked" counts it.
   chrome.runtime
     .sendMessage({ type: 'pg-block', host: v.host, brand: v.brand ? v.brand.name : 'a brand', score: v.score })
@@ -70,7 +70,7 @@ function blockScreen(v: Verdict) {
     ? `<div class="pg-note">Disguised with ${v.homoglyphs.length} look-alike character${v.homoglyphs.length > 1 ? 's' : ''}: real address is <b>${esc(v.skeleton)}</b></div>`
     : ''
   const host = document.createElement('div')
-  host.id = 'phishguard-host'
+  host.id = 'unmaskr-host'
   const sh = host.attachShadow({ mode: 'open' })
   sh.innerHTML = `
   <style>
@@ -106,7 +106,7 @@ function blockScreen(v: Verdict) {
       <button class="safe" id="pg-back">&#8592; Back to safety</button>
       <button class="go" id="pg-go">Continue anyway (not recommended)</button>
     </div>
-    <div class="by">Protected by PhishGuard</div>
+    <div class="by">Protected by Unmaskr</div>
   </div></div>`
   const reattach = () => {
     document.documentElement.appendChild(host)
@@ -136,10 +136,10 @@ function blockScreen(v: Verdict) {
 
 // ── 2. Suspicious top bar ────────────────────────────────────────────────
 function topBar(v: Verdict) {
-  if (document.getElementById('phishguard-bar')) return
+  if (document.getElementById('unmaskr-bar')) return
   const brand = esc(v.brand ? v.brand.name : 'a trusted site')
   const el = document.createElement('div')
-  el.id = 'phishguard-bar'
+  el.id = 'unmaskr-bar'
   const sh = el.attachShadow({ mode: 'open' })
   sh.innerHTML = `
   <style>
@@ -149,7 +149,7 @@ function topBar(v: Verdict) {
     b{color:#fff5dd;} button{margin-left:auto;font:inherit;font-size:12px;background:rgba(255,255,255,.18);
       color:#fff;border:0;border-radius:7px;padding:6px 12px;cursor:pointer;}
   </style>
-  <div class="bar">&#9888;&#65039;&nbsp; <span>PhishGuard: this domain looks suspicious &mdash; possibly imitating <b>${brand}</b>. Be careful.</span>
+  <div class="bar">&#9888;&#65039;&nbsp; <span>Unmaskr: this domain looks suspicious &mdash; possibly imitating <b>${brand}</b>. Be careful.</span>
   <button id="x">Dismiss</button></div>`
   document.documentElement.appendChild(el)
   sh.getElementById('x')?.addEventListener('click', () => el.remove())
@@ -193,7 +193,7 @@ function scanLinks() {
     const flag = document.createElement('span')
     flag.className = 'pg-flag ' + (danger ? 'd' : 'w')
     flag.textContent = danger ? '⚠ fake' : '⚠ risky'
-    flag.title = `PhishGuard: ${host} ${danger ? 'looks like a fake of' : 'may imitate'} ${v.brand ? v.brand.name : 'a brand'} (risk ${v.score}/100)`
+    flag.title = `Unmaskr: ${host} ${danger ? 'looks like a fake of' : 'may imitate'} ${v.brand ? v.brand.name : 'a brand'} (risk ${v.score}/100)`
     a.insertAdjacentElement('afterend', flag)
     flagged++
   })
@@ -209,13 +209,13 @@ async function isEnabled(): Promise<boolean> {
   }
 }
 
-// Remove everything PhishGuard injected (used when the user pauses protection).
+// Remove everything Unmaskr injected (used when the user pauses protection).
 function teardown() {
   blockDismissed = true
   blockGuard?.disconnect()
   blockGuard = null
-  document.getElementById('phishguard-host')?.remove()
-  document.getElementById('phishguard-bar')?.remove()
+  document.getElementById('unmaskr-host')?.remove()
+  document.getElementById('unmaskr-bar')?.remove()
   document.documentElement.style.overflow = ''
   document.querySelectorAll('.pg-flag').forEach((e) => e.remove())
   document.querySelectorAll<HTMLAnchorElement>('a[data-pg]').forEach((a) => {
@@ -232,7 +232,7 @@ async function run() {
   if (!(await isEnabled())) return // master switch: paused
   TRUSTED = await loadTrusted()
 
-  // Demo hook (#phishguard-test=<host>) — compiled in for dev/demo builds only.
+  // Demo hook (#unmaskr-test=<host>) — compiled in for dev/demo builds only.
   // The store build (`build:ext:store`) sets __PG_DEMO__ = false, so esbuild
   // dead-code-eliminates this entire block: the hook and its regex never reach
   // the published bundle. Even in demo builds the value is attacker-controllable,
@@ -241,7 +241,7 @@ async function run() {
   let target = location.hostname
   let demoForced = false
   if (__PG_DEMO__) {
-    const test = location.hash.match(/phishguard-test=([^&\s]+)/)
+    const test = location.hash.match(/unmaskr-test=([^&\s]+)/)
     if (test) {
       const cand = decodeURIComponent(test[1]).toLowerCase()
       if (/^[^\s<>"'&/\\]{1,253}$/.test(cand)) {

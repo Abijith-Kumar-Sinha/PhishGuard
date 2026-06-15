@@ -1,4 +1,4 @@
-// One-off diagnostic: decompose PhishGuard's Tranco false positives by WHY
+// One-off diagnostic: decompose Unmaskr's Tranco false positives by WHY
 // they fire (using the verdict itself), and classify the missed typos.
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
@@ -20,7 +20,7 @@ for (const d of tranco) {
   if (v.brand) pinnedToBrand++
   else { noBrand++; if (noBrandEx.length < 25) noBrandEx.push(`${d} [${v.level}]`) }
 }
-console.log('── PhishGuard Tranco FP composition (by verdict) ──')
+console.log('── Unmaskr Tranco FP composition (by verdict) ──')
 console.log('pinned to a protected brand :', pinnedToBrand, '(legit brand-owned domains on other TLDs, or brand infra)')
 console.log('no brand pinned             :', noBrand)
 console.log('\nprimary-signal tally:')

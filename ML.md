@@ -1,4 +1,4 @@
-# PhishGuard — Tier-1 ML Hybrid (Logistic Regression)
+# Unmaskr — Tier-1 ML Hybrid (Logistic Regression)
 
 An optional, **explainable, lightweight** machine-learning layer that sits on top
 of the classic string engine. The engine is unchanged: it becomes a **feature
