@@ -34,12 +34,18 @@ function check(host: string): Verdict {
   return v
 }
 
+// Escape every HTML metacharacter — used for ANY value interpolated into the
+// shadow-DOM innerHTML below, so a hostile hostname/skeleton can never inject markup.
+const ESC: Record<string, string> = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }
+function esc(s: string): string {
+  return s.replace(/[&<>"']/g, (c) => ESC[c])
+}
+
 function glyphHtml(host: string): string {
   let s = ''
   for (const ch of host) {
-    if (ch.charCodeAt(0) > 127)
-      s += `<span class="pg-bad">${ch}</span>`
-    else s += ch.replace('<', '&lt;')
+    if (ch.charCodeAt(0) > 127) s += `<span class="pg-bad">${esc(ch)}</span>`
+    else s += esc(ch)
   }
   return s
 }
@@ -51,9 +57,9 @@ function blockScreen(v: Verdict) {
   chrome.runtime
     .sendMessage({ type: 'pg-block', host: v.host, brand: v.brand ? v.brand.name : 'a brand', score: v.score })
     .catch(() => {})
-  const brand = v.brand ? v.brand.name : 'a trusted site'
+  const brand = esc(v.brand ? v.brand.name : 'a trusted site')
   const homo = v.homoglyphs.length
-    ? `<div class="pg-note">Disguised with ${v.homoglyphs.length} look-alike character${v.homoglyphs.length > 1 ? 's' : ''}: real address is <b>${v.skeleton}</b></div>`
+    ? `<div class="pg-note">Disguised with ${v.homoglyphs.length} look-alike character${v.homoglyphs.length > 1 ? 's' : ''}: real address is <b>${esc(v.skeleton)}</b></div>`
     : ''
   const host = document.createElement('div')
   host.id = 'phishguard-host'
@@ -109,7 +115,7 @@ function blockScreen(v: Verdict) {
 // ── 2. Suspicious top bar ────────────────────────────────────────────────
 function topBar(v: Verdict) {
   if (document.getElementById('phishguard-bar')) return
-  const brand = v.brand ? v.brand.name : 'a trusted site'
+  const brand = esc(v.brand ? v.brand.name : 'a trusted site')
   const el = document.createElement('div')
   el.id = 'phishguard-bar'
   const sh = el.attachShadow({ mode: 'open' })
@@ -201,8 +207,15 @@ async function run() {
   if (!(await isEnabled())) return // master switch: paused
   TRUSTED = await loadTrusted()
 
+  // Demo hook (#phishguard-test=<host>). The value is attacker-controllable, so
+  // accept it ONLY if it is a plausible hostname — never HTML, spaces or scripts.
+  // (Recommend stripping this hook entirely for the published store build.)
   const test = location.hash.match(/phishguard-test=([^&\s]+)/)
-  const target = test ? decodeURIComponent(test[1]) : location.hostname
+  let target = location.hostname
+  if (test) {
+    const cand = decodeURIComponent(test[1]).toLowerCase()
+    if (/^[a-z0-9.\-¡-￿]{1,253}$/.test(cand)) target = cand
+  }
   const v = check(target)
 
   if (v.level === 'dangerous') blockScreen(v)

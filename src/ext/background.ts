@@ -68,10 +68,15 @@ chrome.runtime.onInstalled.addListener(() => {
 })
 
 // The content script reports each block screen it shows → count it + record it.
+// (Only the extension's own contexts can reach this; web pages cannot. We still
+// validate + clamp the payload as defense-in-depth.)
 chrome.runtime.onMessage.addListener((msg) => {
-  if (msg?.type === 'pg-block' && msg.host) {
-    recordBlock({ host: msg.host, brand: msg.brand ?? 'a brand', score: msg.score ?? 0, ts: Date.now() })
-  }
+  if (msg?.type !== 'pg-block') return
+  const host = typeof msg.host === 'string' ? msg.host.slice(0, 253) : ''
+  if (!host) return
+  const brand = typeof msg.brand === 'string' ? msg.brand.slice(0, 60) : 'a brand'
+  const score = Number.isFinite(msg.score) ? Math.max(0, Math.min(100, msg.score)) : 0
+  recordBlock({ host, brand, score, ts: Date.now() })
 })
 
 // Re-evaluate the active tab's badge immediately when the switch is toggled.
