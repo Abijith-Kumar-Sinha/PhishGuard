@@ -95,10 +95,11 @@ Findings from the self-audit (treating the extension as the attack target):
 | **Message-handler abuse** (`pg-block`) | ✅ hardened — payload type-checked, length-capped, score clamped |
 | **No network / no exfiltration** (`fetch`/XHR/beacon/WebSocket) | ✅ verified — none in `src/`; 100 % on-device |
 | Strip the `#phishguard-test` demo hook for the published build | ⬜ todo (now validated/safe, but ideally absent in production) |
-| Privacy policy — discloses local visit-count learning, no upload | ⬜ todo (required by the store) |
+| Privacy policy — discloses local visit-count learning, no upload | ✅ done (`PRIVACY.md`) |
 | Permission justification — `tabs` + `<all_urls>` (needed to scan every page) | ⬜ todo (document; consider dropping `tabs`) |
 | Store assets — icon, screenshots (have them), description | ⬜ todo (mostly done) |
-| **Inherent limitation:** a hostile page's JS can remove the injected overlay (MV3 content scripts share the page DOM) — best-effort, not preventable | ⚠️ document |
+| **Overlay-removal resilience** — re-inject guard re-adds the block screen if a hostile page deletes it; badge is background-drawn (page-proof) | ✅ mitigated (re-inject guard added) |
+| Badge now turns red on every block shown (incl. demo) — pair with "pin me" | ✅ done |
 
 ---
 

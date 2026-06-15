@@ -70,13 +70,20 @@ chrome.runtime.onInstalled.addListener(() => {
 // The content script reports each block screen it shows → count it + record it.
 // (Only the extension's own contexts can reach this; web pages cannot. We still
 // validate + clamp the payload as defense-in-depth.)
-chrome.runtime.onMessage.addListener((msg) => {
+chrome.runtime.onMessage.addListener((msg, sender) => {
   if (msg?.type !== 'pg-block') return
   const host = typeof msg.host === 'string' ? msg.host.slice(0, 253) : ''
   if (!host) return
   const brand = typeof msg.brand === 'string' ? msg.brand.slice(0, 60) : 'a brand'
   const score = Number.isFinite(msg.score) ? Math.max(0, Math.min(100, msg.score)) : 0
   recordBlock({ host, brand, score, ts: Date.now() })
+  // Turn the toolbar badge red on the tab that showed the block (so the badge
+  // signal matches the overlay, including the demo test hook).
+  const tabId = sender.tab?.id
+  if (tabId != null) {
+    chrome.action.setBadgeText({ tabId, text: BADGE.dangerous.text }).catch(() => {})
+    chrome.action.setBadgeBackgroundColor({ tabId, color: BADGE.dangerous.color }).catch(() => {})
+  }
 })
 
 // Re-evaluate the active tab's badge immediately when the switch is toggled.

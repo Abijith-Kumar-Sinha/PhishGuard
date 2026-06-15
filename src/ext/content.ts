@@ -9,6 +9,9 @@ import type { Brand } from '../data/brands'
 
 let TRUSTED: Brand[] = []
 const cache = new Map<string, Verdict>()
+// Re-inject guard state for the block screen (see blockScreen).
+let blockGuard: MutationObserver | null = null
+let blockDismissed = false
 
 async function loadTrusted(): Promise<Brand[]> {
   try {
@@ -100,16 +103,30 @@ function blockScreen(v: Verdict) {
     </div>
     <div class="by">Protected by PhishGuard</div>
   </div></div>`
-  document.documentElement.appendChild(host)
-  document.documentElement.style.overflow = 'hidden'
+  const reattach = () => {
+    document.documentElement.appendChild(host)
+    document.documentElement.style.overflow = 'hidden'
+  }
+  reattach()
   sh.getElementById('pg-back')?.addEventListener('click', () => {
     if (history.length > 1) history.back()
     else location.assign('about:blank')
   })
   sh.getElementById('pg-go')?.addEventListener('click', () => {
+    blockDismissed = true
+    blockGuard?.disconnect()
+    blockGuard = null
     host.remove()
     document.documentElement.style.overflow = ''
   })
+  // Re-inject guard: a hostile page can delete our overlay from its own DOM.
+  // Put it back unless the user explicitly chose "Continue anyway" (or paused us).
+  blockDismissed = false
+  blockGuard?.disconnect()
+  blockGuard = new MutationObserver(() => {
+    if (!blockDismissed && !host.isConnected) reattach()
+  })
+  blockGuard.observe(document.documentElement, { childList: true })
 }
 
 // ── 2. Suspicious top bar ────────────────────────────────────────────────
@@ -189,6 +206,9 @@ async function isEnabled(): Promise<boolean> {
 
 // Remove everything PhishGuard injected (used when the user pauses protection).
 function teardown() {
+  blockDismissed = true
+  blockGuard?.disconnect()
+  blockGuard = null
   document.getElementById('phishguard-host')?.remove()
   document.getElementById('phishguard-bar')?.remove()
   document.documentElement.style.overflow = ''
