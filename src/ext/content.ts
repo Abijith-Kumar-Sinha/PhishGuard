@@ -71,7 +71,7 @@ function blockScreen(v: Verdict) {
     : ''
   const host = document.createElement('div')
   host.id = 'unmaskr-host'
-  const sh = host.attachShadow({ mode: 'open' })
+  const sh = host.attachShadow({ mode: 'closed' })
   sh.innerHTML = `
   <style>
     .wrap{position:fixed;inset:0;z-index:2147483647;background:radial-gradient(1200px 600px at 50% 0,#5b0f1a,#1a0509 70%);
@@ -140,7 +140,7 @@ function topBar(v: Verdict) {
   const brand = esc(v.brand ? v.brand.name : 'a trusted site')
   const el = document.createElement('div')
   el.id = 'unmaskr-bar'
-  const sh = el.attachShadow({ mode: 'open' })
+  const sh = el.attachShadow({ mode: 'closed' })
   sh.innerHTML = `
   <style>
     .bar{position:fixed;top:0;left:0;right:0;z-index:2147483646;background:linear-gradient(90deg,#7c5510,#b07d18);
